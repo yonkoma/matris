@@ -1,0 +1,78 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://tetrominos.png" type="Texture" id=1]
+
+[node name="Node" type="Node" index="0"]
+
+[node name="Red" type="Sprite" parent="." index="0"]
+
+texture = ExtResource( 1 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Green" type="Sprite" parent="." index="1"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 16, 0 )
+region_enabled = true
+region_rect = Rect2( 16, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Blue" type="Sprite" parent="." index="2"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 32, 0 )
+region_enabled = true
+region_rect = Rect2( 32, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Orange" type="Sprite" parent="." index="3"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 48, 0 )
+region_enabled = true
+region_rect = Rect2( 48, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Yellow" type="Sprite" parent="." index="4"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 64, 0 )
+region_enabled = true
+region_rect = Rect2( 64, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Cyan" type="Sprite" parent="." index="5"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 80, 0 )
+region_enabled = true
+region_rect = Rect2( 80, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Purple" type="Sprite" parent="." index="6"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 96, 0 )
+region_enabled = true
+region_rect = Rect2( 96, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+[node name="Gray" type="Sprite" parent="." index="7"]
+
+texture = ExtResource( 1 )
+centered = false
+offset = Vector2( 112, 0 )
+region_enabled = true
+region_rect = Rect2( 112, 0, 16, 16 )
+_sections_unfolded = [ "Offset", "Region", "Transform" ]
+
+
