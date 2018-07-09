@@ -1,4 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GameBoard.cs" type="Script" id=1]
+
+[sub_resource type="TileSet" id=1]
+
 
 [node name="Node2D" type="Node2D" index="0"]
 
@@ -40,12 +45,13 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 color = Color( 1, 1, 1, 1 )
+script = ExtResource( 1 )
 _sections_unfolded = [ "Rect" ]
 
 [node name="TileMap" type="TileMap" parent="GameBoard" index="0"]
 
 mode = 0
-tile_set = null
+tile_set = SubResource( 1 )
 cell_size = Vector2( 32, 32 )
 cell_quadrant_size = 16
 cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
