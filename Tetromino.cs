@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using static BagGenerator;
 
 public class Tetromino
 {
@@ -22,6 +23,7 @@ public class Tetromino
 
 	private TetrominoType type;
 	private Vector2[] minoTiles;
+	
 
 	public Vector2 position;
 
