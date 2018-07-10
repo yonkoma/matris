@@ -1,11 +1,12 @@
 using Godot;
 using System;
 using static Tetromino;
+using static BagGenerator;
 
 public class GameBoard : ColorRect
 {
 	private TileMap _tileMap;
-	private Tile[,] _tetrisBoard = new Tile[20, 10];
+	private Mino[,] _tetrisBoard = new Mino[20, 10];
 	private Tetromino currentMino;
 	private Tetromino frozenMino;
 
@@ -18,7 +19,7 @@ public class GameBoard : ColorRect
 		{
 			for(int j = 0; j < _tetrisBoard.GetLength(1); j++)
 			{
-				_tetrisBoard[i, j] = Tile.Empty;
+				_tetrisBoard[i, j] = Mino.Empty;
 			}
 		}
 	}
