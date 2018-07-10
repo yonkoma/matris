@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Tetromino;
 
 public class BagGenerator
 {
@@ -18,20 +19,17 @@ public class BagGenerator
 		Gray   = 7,
 	};
 
-	public enum TetrominoTypes
-	{
-		Z,
-		S,
-		J,
-		L,
-		O,
-		I,
-		T,
-	}
+	private static readonly Vector2[] Z_TETROMINO = {new Vector2(-1, -1), new Vector2(0, -1), new Vector2(0, 0), new Vector2(1, 0)};
+	private static readonly Vector2[] S_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(0, -1), new Vector2(1, -1)};
+	private static readonly Vector2[] J_TETROMINO = {new Vector2(-1, -1), new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0)};
+	private static readonly Vector2[] L_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1)};
+	private static readonly Vector2[] O_TETROMINO = {new Vector2(0, 0), new Vector2(0, -1), new Vector2(1, -1), new Vector2(1, 0)};
+	private static readonly Vector2[] I_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0)};
+	private static readonly Vector2[] T_TETROMINO = {new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0)};
 
-	private static readonly List<TetrominoTypes> STANDARD_BAG = Enum.GetValues(typeof(TetrominoTypes)).Cast<TetrominoTypes>().ToList();
+	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
-	private List<TetrominoTypes> tetrominoBag = new List<TetrominoTypes>();
+	private List<Vector2[]> tetrominoBag = new List<Vector2[]>();
 	
 	public BagGenerator()
 	{
@@ -40,13 +38,39 @@ public class BagGenerator
 
 	private void addNewBag()
 	{
-		List<TetrominoTypes> newBag = new List<TetrominoTypes>(STANDARD_BAG);
+		List<TetrominoType> drawingBag = new List<TetrominoType>(STANDARD_BAG);
 		Random rand = new Random();
-		for(int i = newBag.Count; i > 0; i--)
+		for(int i = drawingBag.Count; i > 0; i--)
 		{
 			int chosenTetrominoIndex = rand.Next(i);
-			tetrominoBag.Add(newBag.ElementAt(chosenTetrominoIndex));
-			newBag.RemoveAt(chosenTetrominoIndex);
+			TetrominoType addedTetrominoType = drawingBag.ElementAt(chosenTetrominoIndex);
+			switch(addedTetrominoType)
+			{
+				case TetrominoType.Z:
+					tetrominoBag.Add((Vector2[])Z_TETROMINO.Clone());
+					break;
+				case TetrominoType.S:
+					tetrominoBag.Add((Vector2[])S_TETROMINO.Clone());
+					break;
+				case TetrominoType.J:
+					tetrominoBag.Add((Vector2[])J_TETROMINO.Clone());
+					break;
+				case TetrominoType.L:
+					tetrominoBag.Add((Vector2[])L_TETROMINO.Clone());
+					break;
+				case TetrominoType.O:
+					tetrominoBag.Add((Vector2[])O_TETROMINO.Clone());
+					break;
+				case TetrominoType.I:
+					tetrominoBag.Add((Vector2[])I_TETROMINO.Clone());
+					break;
+				case TetrominoType.T:
+					tetrominoBag.Add((Vector2[])T_TETROMINO.Clone());
+					break;
+				default:
+					throw new Exception("Tried to create tetromino of unknown type");
+			}
+			drawingBag.RemoveAt(chosenTetrominoIndex);
 		}
 	}
 

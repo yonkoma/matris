@@ -1,52 +1,40 @@
 using Godot;
 using System;
-using static BagGenerator;
 
 public class Tetromino
 {
-	public enum Rotation
+	public enum TetrominoType
+	{
+		Z,
+		S,
+		J,
+		L,
+		O,
+		I,
+		T,
+	}
+
+	public enum RotationDirection
 	{
 		Left  = -1,
 		Right = 1,
 	}
 
-	private static readonly Vector2[] Z_TETROMINO = {new Vector2(-1, -1), new Vector2(0, -1), new Vector2(0, 0), new Vector2(1, 0)};
-	private static readonly Vector2[] S_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(0, -1), new Vector2(1, -1)};
-	private static readonly Vector2[] J_TETROMINO = {new Vector2(-1, -1), new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0)};
-	private static readonly Vector2[] L_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1)};
-	private static readonly Vector2[] O_TETROMINO = {new Vector2(0, 0), new Vector2(0, -1), new Vector2(1, -1), new Vector2(1, 0)};
-	private static readonly Vector2[] I_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0)};
-	private static readonly Vector2[] T_TETROMINO = {new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0)};
-
+	private TetrominoType type;
 	private Vector2[] minoTiles;
-	
 
-	public Tetromino(Mino tileType) {
-		switch(tileType)
-		{
-			case Mino.Red:
-				minoTiles = (Vector2[])Z_TETROMINO.Clone();
-				break;
-			case Mino.Green:
-				minoTiles = (Vector2[])S_TETROMINO.Clone();
-				break;
-			case Mino.Blue:
-				minoTiles = (Vector2[])J_TETROMINO.Clone();
-				break;
-			case Mino.Orange:
-				minoTiles = (Vector2[])L_TETROMINO.Clone();
-				break;
-			case Mino.Yellow:
-				minoTiles = (Vector2[])O_TETROMINO.Clone();
-				break;
-			case Mino.Cyan:
-				minoTiles = (Vector2[])I_TETROMINO.Clone();
-				break;
-			case Mino.Purple:
-				minoTiles = (Vector2[])T_TETROMINO.Clone();
-				break;
-			default:
-				throw new Exception("Tried to create tetromino of unknown type");
+	public Vector2 position;
+
+	public Tetromino(TetrominoType type, Vector2[] minoTiles)
+	{
+		this.type = type;
+		this.minoTiles = minoTiles;
+	}
+
+	public void rotate(RotationDirection dir)
+	{
+		for(int i = 0; i < minoTiles.Length; i++) {
+			minoTiles[i] = minoTiles[i].Rotated(Mathf.Pi / 2 * (int)dir);
 		}
 	}
 }
