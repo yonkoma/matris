@@ -24,9 +24,11 @@ public class GameBoard : ColorRect
 		}
 	}
 
+/* _Process commented out as it has nothing in it.
 	public override void _Process(float delta)
 	{
 		// Called every frame. Delta is time since last frame.
 		// Update game logic here.
-	}
+	}*/
 }
+
