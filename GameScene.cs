@@ -11,7 +11,7 @@ public class GameScene : Node2D
 	// Called every time the node is added to the scene.
 	// Initialization here
     }
-    
+    /* _Process commented out because it has nothing in it.
     public override void _Process(float delta)
     {
 	// Called every frame. Delta is time since last frame.
@@ -19,7 +19,7 @@ public class GameScene : Node2D
 	
 	// Send out a signal on play / pause
 	
-    }
+} */
 
     public override void _Input(InputEvent x)
     {
