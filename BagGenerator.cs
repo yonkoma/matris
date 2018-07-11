@@ -29,7 +29,7 @@ public class BagGenerator
 
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
-	private List<Vector2[]> tetrominoBag = new List<Vector2[]>();
+	private List<Vector2[]> TetrominoBag = new List<Vector2[]>();
 	
 	public BagGenerator()
 	{
@@ -47,25 +47,25 @@ public class BagGenerator
 			switch(addedTetrominoType)
 			{
 				case TetrominoType.Z:
-					tetrominoBag.Add((Vector2[])Z_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])Z_TETROMINO.Clone());
 					break;
 				case TetrominoType.S:
-					tetrominoBag.Add((Vector2[])S_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])S_TETROMINO.Clone());
 					break;
 				case TetrominoType.J:
-					tetrominoBag.Add((Vector2[])J_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])J_TETROMINO.Clone());
 					break;
 				case TetrominoType.L:
-					tetrominoBag.Add((Vector2[])L_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])L_TETROMINO.Clone());
 					break;
 				case TetrominoType.O:
-					tetrominoBag.Add((Vector2[])O_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])O_TETROMINO.Clone());
 					break;
 				case TetrominoType.I:
-					tetrominoBag.Add((Vector2[])I_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])I_TETROMINO.Clone());
 					break;
 				case TetrominoType.T:
-					tetrominoBag.Add((Vector2[])T_TETROMINO.Clone());
+					TetrominoBag.Add((Vector2[])T_TETROMINO.Clone());
 					break;
 				default:
 					throw new Exception("Tried to create tetromino of unknown type");

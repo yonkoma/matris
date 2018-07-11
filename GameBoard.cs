@@ -5,23 +5,34 @@ using static BagGenerator;
 
 public class GameBoard : ColorRect
 {
-	private TileMap _tileMap;
-	private Mino[,] _tetrisBoard = new Mino[20, 10];
-	private Tetromino currentMino;
-	private Tetromino frozenMino;
+	private TileMap @TileMap;
+	private Mino[,] TetrisBoard = new Mino[20, 10];
+	private Tetromino CurrentMino;
+	private Tetromino FrozenMino;
+
 
 	public override void _Ready()
 	{
 		// Called every time the node is added to the scene.
 		// Initialization here
-		_tileMap = (TileMap)GetNode("TileMap");
-		for(int i = 0; i < _tetrisBoard.GetLength(0); i++)
+		// Initializes Tetris board and Grid
+		@TileMap =  (TileMap)GetNode("TileMap");
+		for(int i = 0; i < TetrisBoard.GetLength(0); i++)
 		{
-			for(int j = 0; j < _tetrisBoard.GetLength(1); j++)
+			for(int j = 0; j < TetrisBoard.GetLength(1); j++)
 			{
-				_tetrisBoard[i, j] = Mino.Empty;
+				TetrisBoard[i, j] = Mino.Empty;
 			}
 		}
+	}
+
+	//Override draw function to draw the grid
+	//Grid is drawn by taking the number of Tetromino slots and drawing lines long enough to match
+	public override void _Draw()
+	{
+
+
+
 	}
 
 /* _Process commented out as it has nothing in it.
