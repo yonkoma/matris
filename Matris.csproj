@@ -49,15 +49,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameBoard.cs" />
-    <Compile Include="GameScene.cs" />
-    <Compile Include="PlayPrompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="scripts\GameBoard.cs" />
     <Compile Include="scripts\GameScene.cs" />
     <Compile Include="scripts\PlayPrompt.cs" />
-    <Compile Include="Tetromino.cs" />
-    <Compile Include="BagGenerator.cs" />
+    <Compile Include="scripts\Tetromino.cs" />
+    <Compile Include="scripts\BagGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -29,11 +29,21 @@ public class BagGenerator
 
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
-	private List<Vector2[]> TetrominoBag = new List<Vector2[]>();
+	private Queue<Tetromino> TetrominoBag = new Queue<Tetromino>();
 
 	public BagGenerator()
 	{
 		addNewBag();
+	}
+
+	public Tetromino Dequeue()
+	{
+		return TetrominoBag.Dequeue();
+	}
+
+	public Tetromino ElementAt(int index)
+	{
+		return TetrominoBag.ElementAt(index);
 	}
 
 	private void addNewBag()
@@ -43,35 +53,36 @@ public class BagGenerator
 		for(int i = drawingBag.Count; i > 0; i--)
 		{
 			int chosenTetrominoIndex = rand.Next(i);
-			TetrominoType addedTetrominoType = drawingBag.ElementAt(chosenTetrominoIndex);
+			TetrominoType addedTetrominoType = drawingBag[chosenTetrominoIndex];
+			Vector2[] addedTetrominoMinos;
 			switch(addedTetrominoType)
 			{
 				case TetrominoType.Z:
-					TetrominoBag.Add((Vector2[])Z_TETROMINO.Clone());
+					addedTetrominoMinos = Z_TETROMINO;
 					break;
 				case TetrominoType.S:
-					TetrominoBag.Add((Vector2[])S_TETROMINO.Clone());
+					addedTetrominoMinos = S_TETROMINO;
 					break;
 				case TetrominoType.J:
-					TetrominoBag.Add((Vector2[])J_TETROMINO.Clone());
+					addedTetrominoMinos = J_TETROMINO;
 					break;
 				case TetrominoType.L:
-					TetrominoBag.Add((Vector2[])L_TETROMINO.Clone());
+					addedTetrominoMinos = L_TETROMINO;
 					break;
 				case TetrominoType.O:
-					TetrominoBag.Add((Vector2[])O_TETROMINO.Clone());
+					addedTetrominoMinos = O_TETROMINO;
 					break;
 				case TetrominoType.I:
-					TetrominoBag.Add((Vector2[])I_TETROMINO.Clone());
+					addedTetrominoMinos = I_TETROMINO;
 					break;
 				case TetrominoType.T:
-					TetrominoBag.Add((Vector2[])T_TETROMINO.Clone());
+					addedTetrominoMinos = T_TETROMINO;
 					break;
 				default:
 					throw new Exception("Tried to create tetromino of unknown type");
 			}
+			TetrominoBag.Enqueue(new Tetromino(addedTetrominoType, addedTetrominoMinos));
 			drawingBag.RemoveAt(chosenTetrominoIndex);
 		}
 	}
-
 }

@@ -24,16 +24,15 @@ public class Tetromino
 	private TetrominoType type;
 	private Vector2[] minoTiles;
 
-
 	public Vector2 position;
 
 	public Tetromino(TetrominoType type, Vector2[] minoTiles)
 	{
 		this.type = type;
-		this.minoTiles = minoTiles;
+		this.minoTiles = (Vector2[])minoTiles.Clone();
 	}
 
-	public void rotate(RotationDirection dir)
+	public void Rotate(RotationDirection dir)
 	{
 		for(int i = 0; i < minoTiles.Length; i++) {
 			minoTiles[i] = minoTiles[i].Rotated(Mathf.Pi / 2 * (int)dir);

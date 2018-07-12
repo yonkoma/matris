@@ -5,10 +5,12 @@ using static BagGenerator;
 
 public class GameBoard : ColorRect
 {
-	private TileMap @TileMap;
+	private TileMap BoardTileMap;
 	private Mino[,] TetrisBoard = new Mino[20, 10];
-	private Tetromino CurrentMino;
-	private Tetromino FrozenMino;
+	private BagGenerator BagGen = new BagGenerator();
+	private Tetromino CurrentTetromino;
+	private Tetromino FrozenTetromino;
+	private bool GameIsPaused;
 
 
 	public override void _Ready()
@@ -16,12 +18,26 @@ public class GameBoard : ColorRect
 		// Called every time the node is added to the scene.
 		// Initialization here
 		// Initializes Tetris board and Grid
-		@TileMap =  (TileMap)GetNode("TileMap");
+		BoardTileMap =  (TileMap)GetNode("TileMap");
 		for(int i = 0; i < TetrisBoard.GetLength(0); i++)
 		{
 			for(int j = 0; j < TetrisBoard.GetLength(1); j++)
 			{
 				TetrisBoard[i, j] = Mino.Empty;
+			}
+		}
+	}
+
+
+	public override void _Process(float delta)
+	{
+		// Called every frame. Delta is time since last frame.
+		// Update game logic here.
+		if(!GameIsPaused)
+		{
+			if(CurrentTetromino == null)
+			{
+				CurrentTetromino = BagGen.Dequeue();
 			}
 		}
 	}
