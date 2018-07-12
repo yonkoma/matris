@@ -2,12 +2,12 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/mino.png-2cb49b32ba45a65b6a7be233cba49bfa.stex"
+path="res://.import/icon.png-b9450fb2459f5b277908511db3d050dd.stex"
 
 [deps]
 
-source_file="res://mino.png"
-dest_files=[ "res://.import/mino.png-2cb49b32ba45a65b6a7be233cba49bfa.stex" ]
+source_file="res://images/icon.png"
+dest_files=[ "res://.import/icon.png-b9450fb2459f5b277908511db3d050dd.stex" ]
 
 [params]
 
@@ -16,7 +16,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

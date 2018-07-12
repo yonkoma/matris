@@ -53,6 +53,9 @@
     <Compile Include="GameScene.cs" />
     <Compile Include="PlayPrompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="scripts\GameBoard.cs" />
+    <Compile Include="scripts\GameScene.cs" />
+    <Compile Include="scripts\PlayPrompt.cs" />
     <Compile Include="Tetromino.cs" />
     <Compile Include="BagGenerator.cs" />
   </ItemGroup>
