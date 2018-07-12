@@ -30,7 +30,7 @@ public class BagGenerator
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
 	private List<Vector2[]> TetrominoBag = new List<Vector2[]>();
-	
+
 	public BagGenerator()
 	{
 		addNewBag();

@@ -26,20 +26,13 @@ public class GameBoard : ColorRect
 		}
 	}
 
-	//Override draw function to draw the grid
-	//Grid is drawn by taking the number of Tetromino slots and drawing lines long enough to match
+	// Override draw function to draw the grid
+	// Grid is drawn by taking the number of Tetromino slots and drawing lines long enough to match
 	public override void _Draw()
 	{
 
 
 
 	}
-
-/* _Process commented out as it has nothing in it.
-	public override void _Process(float delta)
-	{
-		// Called every frame. Delta is time since last frame.
-		// Update game logic here.
-	}*/
 }
 
