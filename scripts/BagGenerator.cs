@@ -33,7 +33,7 @@ public class BagGenerator
 
 	public BagGenerator()
 	{
-		addNewBag();
+		AddNewBag();
 	}
 
 	public Tetromino Dequeue()
@@ -46,7 +46,7 @@ public class BagGenerator
 		return TetrominoBag.ElementAt(index);
 	}
 
-	private void addNewBag()
+	private void AddNewBag()
 	{
 		List<TetrominoType> drawingBag = new List<TetrominoType>(STANDARD_BAG);
 		Random rand = new Random();

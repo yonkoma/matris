@@ -4,7 +4,11 @@ using System;
 public class GameScene : Node2D
 {
 	[Signal]
-	delegate void Play_Pause();
+	delegate void PlaySignal();
+	[Signal]
+	delegate void PauseSignal();
+
+	private bool GameIsPaused = true;
 
 	public override void _Ready()
 	{
@@ -15,6 +19,9 @@ public class GameScene : Node2D
 	public override void _Input(InputEvent x)
 	{
 		if(x.IsActionPressed("play_pause"))
-			EmitSignal(nameof(Play_Pause));
+		{
+			EmitSignal(GameIsPaused ? nameof(PlaySignal) : nameof(PauseSignal));
+			GameIsPaused = !GameIsPaused;
+		}
 	}
 }

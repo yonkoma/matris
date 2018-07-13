@@ -4,21 +4,22 @@ using System;
 public class PlayPrompt : Label
 {
 	// Member variables here
-	bool Paused = true;
 
 	public override void _Ready()
 	{
 		// Called every time the node is added to the scene.
 		// Initialization here
-		GetNode("/root/RootNode").Connect("Play_Pause", this, nameof(On_Pause));
+		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlay));
+		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPause));
 	}
 
-	public void On_Pause()
+	public void OnPlay()
 	{
-		if(Paused)
-			this.Text = "";
-		else
-			this.Text = "Paused! Press F to resume.";
-		Paused = !Paused;
+		this.Text = "";
+	}
+
+	public void OnPause()
+	{
+		this.Text = "Paused! Press F to resume.";
 	}
 }
