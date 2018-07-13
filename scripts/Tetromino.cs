@@ -29,7 +29,7 @@ public class Tetromino
 	{
 		this.Type = type;
 		this.MinoTiles = (Vector2[])minoTiles.Clone();
-		this.Position = new Vector2(5, 23);
+		this.Position = new Vector2(4, 23);
 	}
 
 	public void Rotate(RotationDirection dir)

@@ -13,6 +13,7 @@ public class GameBoard : ColorRect
 	private Tetromino FrozenTetromino;
 	private bool GameIsPaused = true;
 	private float TimeSinceLastMovement = 0;
+	private float DropRate = 0.1f;
 
 	public override void _Ready()
 	{
@@ -39,8 +40,32 @@ public class GameBoard : ColorRect
 		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new object[] {false});
 	}
 
-	public void OnPlayPause(bool startedPlaying) {
+	public void OnPlayPause(bool startedPlaying)
+	{
 		GameIsPaused = !startedPlaying;
+	}
+
+	public override void _Input(InputEvent input)
+	{
+		if(CurrentTetromino != null && !GameIsPaused)
+		{
+			if(input.IsActionPressed("move_left"))
+			{
+				CurrentTetromino.Position += Vector2.Left;
+			}
+			else if(input.IsActionPressed("move_right"))
+			{
+				CurrentTetromino.Position += Vector2.Right;
+			}
+		}
+		if(input.IsActionPressed("soft_drop"))
+		{
+			DropRate = 0.01f;
+		}
+		if(input.IsActionReleased("soft_drop"))
+		{
+			DropRate = 0.05f;
+		}
 	}
 
 	public override void _Process(float delta)
@@ -56,7 +81,7 @@ public class GameBoard : ColorRect
 				CurrentTetromino = BagGen.Dequeue();
 			}
 
-			if(TimeSinceLastMovement > 0.1)
+			if(TimeSinceLastMovement > DropRate)
 			{
 				TimeSinceLastMovement = 0;
 				CurrentTetromino.Position += Vector2.Down;
@@ -80,7 +105,7 @@ public class GameBoard : ColorRect
 			foreach(Vector2 relativeMino in CurrentTetromino.MinoTiles)
 			{
 				Vector2 minoPosition = CurrentTetromino.Position + relativeMino;
-				if(minoPosition.x >= 0 && minoPosition.x < 20 && minoPosition.y >= 0 && minoPosition.y < 20)
+				if(minoPosition.x >= 0 && minoPosition.x < 10 && minoPosition.y >= 0 && minoPosition.y < 20)
 				{
 					SpriteBoard[(int)minoPosition.y, (int)minoPosition.x].Visible = true;
 					SpriteBoard[(int)minoPosition.y, (int)minoPosition.x].Frame = (int)CurrentTetromino.Type;
