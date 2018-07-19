@@ -36,8 +36,8 @@ public class GameBoard : ColorRect
 				this.AddChild(SpriteBoard[row, col]);
 			}
 		}
-		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new object[] {true});
-		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new object[] {false});
+		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new object[] { true });
+		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new object[] { false });
 	}
 
 	public void OnPlayPause(bool startedPlaying)

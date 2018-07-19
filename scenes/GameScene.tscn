@@ -4,7 +4,7 @@
 [ext_resource path="res://scenes/GameBoard.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scripts/PlayPrompt.cs" type="Script" id=3]
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" index="0"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Material", "Pause", "Transform", "Visibility", "Z Index" ]
