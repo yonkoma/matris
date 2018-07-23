@@ -15,27 +15,21 @@ public class Tetromino
 		T = Mino.Purple,
 	}
 
-	public enum RotationDirection
-	{
-		Left  = -1,
-		Right = 1,
-	}
-
 	public TetrominoType Type;
-	public Vector2[] MinoTiles;
-	public Vector2 Position;
+	public Vector2Int[] MinoTiles;
+	public Vector2Int Position;
 
-	public Tetromino(TetrominoType type, Vector2[] minoTiles)
+	public Tetromino(TetrominoType type, Vector2Int[] minoTiles)
 	{
 		this.Type = type;
-		this.MinoTiles = (Vector2[])minoTiles.Clone();
-		this.Position = new Vector2(4, 23);
+		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
+		this.Position = new Vector2Int(4, 23);
 	}
 
-	public void Rotate(RotationDirection dir)
+	public void Rotate(Vector2Int.RotationDirection dir)
 	{
 		for(int i = 0; i < MinoTiles.Length; i++) {
-			MinoTiles[i] = MinoTiles[i].Rotated(Mathf.Pi / 2 * (int)dir);
+			MinoTiles[i] = MinoTiles[i].Rotated(dir);
 		}
 	}
 }

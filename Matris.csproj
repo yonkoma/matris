@@ -55,6 +55,7 @@
     <Compile Include="scripts\PlayPrompt.cs" />
     <Compile Include="scripts\Tetromino.cs" />
     <Compile Include="scripts\BagGenerator.cs" />
+    <Compile Include="scripts\Vector2Int.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

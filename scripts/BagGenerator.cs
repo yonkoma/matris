@@ -19,13 +19,13 @@ public class BagGenerator
 		Gray   = 7,
 	};
 
-	private static readonly Vector2[] Z_TETROMINO = {new Vector2(-1, 1), new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0)};
-	private static readonly Vector2[] S_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)};
-	private static readonly Vector2[] J_TETROMINO = {new Vector2(-1, 1), new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0)};
-	private static readonly Vector2[] L_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1)};
-	private static readonly Vector2[] O_TETROMINO = {new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0)};
-	private static readonly Vector2[] I_TETROMINO = {new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0)};
-	private static readonly Vector2[] T_TETROMINO = {new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 0)};
+	private static readonly Vector2Int[] Z_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(0, 1), new Vector2Int(0, 0), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] S_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1) };
+	private static readonly Vector2Int[] J_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] L_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(1, 1) };
+	private static readonly Vector2Int[] O_TETROMINO = { new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] I_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0) };
+	private static readonly Vector2Int[] T_TETROMINO = { new Vector2Int(0, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(1, 0) };
 
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
@@ -56,7 +56,7 @@ public class BagGenerator
 		{
 			int chosenTetrominoIndex = rand.Next(i);
 			TetrominoType addedTetrominoType = drawingBag[chosenTetrominoIndex];
-			Vector2[] addedTetrominoMinos;
+			Vector2Int[] addedTetrominoMinos;
 			switch(addedTetrominoType)
 			{
 				case TetrominoType.Z:

@@ -48,6 +48,12 @@ public struct Vector2Int : IEquatable<Vector2Int>
 			}
 		}
 	}
+
+	public Vector2Int Rotated(RotationDirection dir)
+	{
+		return new Vector2Int(y*(int)dir, -x*(int)dir);
+	}
+
 	public static implicit operator Vector2(Vector2Int v)
 	{
 		return new Vector2(v.x, v.y);
@@ -100,10 +106,15 @@ public struct Vector2Int : IEquatable<Vector2Int>
 		return x.GetHashCode() ^ (y.GetHashCode() << 2);
 	}
 
-	/// *listonly*
 	public override string ToString()
 	{
 		return String.Format("({0}, {1})", x, y);
+	}
+
+	public enum RotationDirection
+	{
+		Left  = -1,
+		Right = 1,
 	}
 
 	private static readonly Vector2Int _zero   = new Vector2Int(0, 0);
