@@ -5,15 +5,20 @@ using static BagGenerator;
 
 public class GameBoard : ColorRect
 {
+	public const int BOARD_WIDTH = 10;
+	public const int BOARD_HEIGHT = 20;
+	private const float DROP_RATE = 0.15f;
+	private const float SOFT_DROP_RATE = DROP_RATE/2;
+
 	private TileMap BoardTileMap;
-	private Mino[,] TetrisBoard = new Mino[20, 10];
-	private Sprite[,] SpriteBoard = new Sprite[20, 10];
+	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT, BOARD_WIDTH];
+	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
 	private BagGenerator BagGen = new BagGenerator();
 	private Tetromino CurrentTetromino;
 	private Tetromino FrozenTetromino;
 	private bool GameIsPaused = true;
 	private float TimeSinceLastMovement = 0;
-	private float DropRate = 0.1f;
+	private float DropRate = DROP_RATE;
 
 	public override void _Ready()
 	{
@@ -31,7 +36,7 @@ public class GameBoard : ColorRect
 				SpriteBoard[row, col].Texture = tetrominoTexture;
 				SpriteBoard[row, col].Centered = false;
 				SpriteBoard[row, col].Hframes = 8;
-				SpriteBoard[row, col].Position = new Vector2(col * tetrominoSize, (20 - row - 1) * tetrominoSize);
+				SpriteBoard[row, col].Position = new Vector2(col * tetrominoSize, (BOARD_HEIGHT - row - 1) * tetrominoSize);
 				SpriteBoard[row, col].Visible = false;
 				this.AddChild(SpriteBoard[row, col]);
 			}
@@ -49,14 +54,15 @@ public class GameBoard : ColorRect
 	{
 		if(CurrentTetromino != null && !GameIsPaused)
 		{
-			if(input.IsActionPressed("move_left"))
+			if(input.IsAction("move_left"))
 			{
-				CurrentTetromino.Position += Vector2Int.Left;
+				CurrentTetromino.Translate(Vector2Int.Left);
 			}
-			else if(input.IsActionPressed("move_right"))
+			else if(input.IsAction("move_right"))
 			{
-				CurrentTetromino.Position += Vector2Int.Right;
+				CurrentTetromino.Translate(Vector2Int.Right);
 			}
+
 			if(input.IsActionPressed("rotate_left"))
 			{
 				CurrentTetromino.Rotate(Vector2Int.RotationDirection.Left);
@@ -68,11 +74,11 @@ public class GameBoard : ColorRect
 		}
 		if(input.IsActionPressed("soft_drop"))
 		{
-			DropRate = 0.01f;
+			DropRate = SOFT_DROP_RATE;
 		}
 		if(input.IsActionReleased("soft_drop"))
 		{
-			DropRate = 0.05f;
+			DropRate = DROP_RATE;
 		}
 	}
 
@@ -87,12 +93,21 @@ public class GameBoard : ColorRect
 			if(CurrentTetromino == null)
 			{
 				CurrentTetromino = BagGen.Dequeue();
+				CurrentTetromino.TetrisBoard = TetrisBoard;
 			}
 
 			if(TimeSinceLastMovement > DropRate)
 			{
 				TimeSinceLastMovement = 0;
-				CurrentTetromino.Position += Vector2Int.Down;
+				if(!CurrentTetromino.Translate(Vector2Int.Down))
+				{
+					foreach(Vector2Int relativeMinoPos in CurrentTetromino.MinoTiles)
+					{
+						Vector2Int minoPosition = CurrentTetromino.Position + relativeMinoPos;
+						TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)CurrentTetromino.Type;
+					}
+					CurrentTetromino = null;
+				}
 			}
 
 			for(int row = 0; row < TetrisBoard.GetLength(0); row++)
@@ -113,7 +128,7 @@ public class GameBoard : ColorRect
 			foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
 			{
 				Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
-				if(minoPosition.x >= 0 && minoPosition.x < 10 && minoPosition.y >= 0 && minoPosition.y < 20)
+				if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
 				{
 					SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
 					SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
