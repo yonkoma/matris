@@ -16,9 +16,10 @@ public class Tetromino
 	}
 
 	public TetrominoType Type { get; }
-	public Vector2Int[] MinoTiles { get; }
+	public Vector2Int[] MinoTiles { get; private set; }
 	public Vector2Int Position { get; private set; }
 	public Mino[,] TetrisBoard { get; set; }
+	private Rotation CurrentRotationState = Rotation.Up;
 
 	public Tetromino(TetrominoType type, Vector2Int[] minoTiles)
 	{
@@ -37,11 +38,17 @@ public class Tetromino
 		return false;
 	}
 
-	public void Rotate(Vector2Int.RotationDirection dir)
+	public void Rotate(Rotation dir)
 	{
-		for(int i = 0; i < MinoTiles.Length; i++)
+		bool rotatedSuccessfully = true;
+		Vector2Int[] newMinoTiles = MinoTiles;
+		for(int i = 0; i < newMinoTiles.Length; i++)
 		{
-			MinoTiles[i] = MinoTiles[i].Rotated(dir);
+			newMinoTiles[i] = newMinoTiles[i].Rotated(dir);
+		}
+		if(rotatedSuccessfully)
+		{
+			CurrentRotationState = CurrentRotationState + dir;
 		}
 	}
 

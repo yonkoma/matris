@@ -65,11 +65,11 @@ public class GameBoard : ColorRect
 
 			if(input.IsActionPressed("rotate_left"))
 			{
-				CurrentTetromino.Rotate(Vector2Int.RotationDirection.Left);
+				CurrentTetromino.Rotate(Rotation.Left);
 			}
 			else if(input.IsActionPressed("rotate_right"))
 			{
-				CurrentTetromino.Rotate(Vector2Int.RotationDirection.Right);
+				CurrentTetromino.Rotate(Rotation.Right);
 			}
 		}
 		if(input.IsActionPressed("soft_drop"))
