@@ -3,12 +3,12 @@ using System;
 using static Tetromino;
 using static BagGenerator;
 
-public class GameBoard : ColorRect
+public class GameBoard : TextureRect
 {
 	public const int BOARD_WIDTH = 10;
 	public const int BOARD_HEIGHT = 20;
-	private const float DROP_RATE = 0.15f;
-	private const float SOFT_DROP_RATE = DROP_RATE/2;
+	private const float DROP_RATE = 0.30f;
+	private const float SOFT_DROP_RATE = 0.08f;
 
 	private TileMap BoardTileMap;
 	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT, BOARD_WIDTH];
@@ -80,6 +80,12 @@ public class GameBoard : ColorRect
 		{
 			DropRate = DROP_RATE;
 		}
+		if(input.IsActionPressed("hard_drop"))
+		{
+			CurrentTetromino.HardDrop();
+			LockPiece(CurrentTetromino);
+			CurrentTetromino = null;
+		}
 	}
 
 	public override void _Process(float delta)
@@ -101,12 +107,7 @@ public class GameBoard : ColorRect
 				TimeSinceLastMovement = 0;
 				if(!CurrentTetromino.Translate(Vector2Int.Down))
 				{
-					CurrentTetromino.Locked = true;
-					foreach(Vector2Int relativeMinoPos in CurrentTetromino.MinoTiles)
-					{
-						Vector2Int minoPosition = CurrentTetromino.Position + relativeMinoPos;
-						TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)CurrentTetromino.Type;
-					}
+					LockPiece(CurrentTetromino);
 					CurrentTetromino = null;
 				}
 			}
@@ -138,6 +139,16 @@ public class GameBoard : ColorRect
 					}
 				}
 			}
+		}
+	}
+
+	public void LockPiece(Tetromino piece)
+	{
+		piece.Locked = true;
+		foreach(Vector2Int relativeMinoPos in piece.MinoTiles)
+		{
+			Vector2Int minoPosition = piece.Position + relativeMinoPos;
+			TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
 		}
 	}
 

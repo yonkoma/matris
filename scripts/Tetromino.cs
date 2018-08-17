@@ -21,21 +21,29 @@ public class Tetromino
 	public Vector2Int Position { get; private set; }
 	public Mino[,] TetrisBoard { get; set; }
 	public bool Locked { get; set; } = false;
-	private Rotation CurrentRotationState = Rotation.Up;
+	private Rotation CurrentRotationState;
+	private Mino[] BottomMinos;
 
 	public Tetromino(TetrominoType type, Vector2Int[] minoTiles)
 	{
 		this.Type = type;
 		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
 		this.Position = new Vector2Int(4, 23);
+		CurrentRotationState = Rotation.Up;
 	}
 
 	public bool Translate(Vector2Int vec)
 	{
-		if(!Locked && TestMovement(vec, MinoTiles))
+		if(!Locked)
 		{
-			this.Position += vec;
-			return true;
+			Locked = true;
+			if(TestMovement(vec, MinoTiles))
+			{
+				this.Position += vec;
+				Locked = false;
+				return true;
+			}
+			Locked = false;
 		}
 		return false;
 	}
@@ -44,6 +52,7 @@ public class Tetromino
 	{
 		if(!Locked)
 		{
+			Locked = true;
 			bool rotatedSuccessfully = true;
 			Vector2Int[] newMinoTiles = new Vector2Int[MinoTiles.Length];
 			Rotation newRotationState = CurrentRotationState + dir;
@@ -84,7 +93,28 @@ public class Tetromino
 					MinoTiles[i] = newMinoTiles[i];
 				}
 			}
+			Locked = false;
 		}
+	}
+
+	public void HardDrop()
+	{
+		if(!Locked)
+		{
+			Locked = true;
+			this.Position += GetHardDropOffset();
+			Locked = false;
+		}
+	}
+
+	public Vector2Int GetHardDropOffset()
+	{
+		Vector2Int offset = Vector2Int.Zero;
+		while(TestMovement(Vector2Int.Down + offset, MinoTiles))
+		{
+			offset += Vector2Int.Down;
+		}
+		return offset;
 	}
 
 	private bool TestMovement(Vector2Int vec, Vector2Int[] minos)
