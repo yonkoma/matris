@@ -18,6 +18,12 @@ public struct Vector2Int : IEquatable<Vector2Int>
 		this.y = y;
 	}
 
+	public Vector2Int(Vector2Int vec)
+	{
+		this.x = vec.x;
+		this.y = vec.y;
+	}
+
 	public int this[int index]
 	{
 		get
@@ -51,7 +57,26 @@ public struct Vector2Int : IEquatable<Vector2Int>
 
 	public Vector2Int Rotated(Rotation dir)
 	{
-		return new Vector2Int(y*dir, -x*dir);
+		if(dir == Rotation.Up)
+		{
+			return new Vector2Int(x, y);
+		}
+		else if(dir == Rotation.Right)
+		{
+			return new Vector2Int(y, -x);
+		}
+		else if(dir == Rotation.Down)
+		{
+			return new Vector2Int(-x, -y);
+		}
+		else if(dir == Rotation.Left)
+		{
+			return new Vector2Int(-y, x);
+		}
+		else
+		{
+			throw new ArgumentException("Invalid rotation value.");
+		}
 	}
 
 	public static implicit operator Vector2(Vector2Int v)

@@ -54,11 +54,11 @@ public class GameBoard : ColorRect
 	{
 		if(CurrentTetromino != null && !GameIsPaused)
 		{
-			if(input.IsAction("move_left"))
+			if(input.IsActionPressed("move_left"))
 			{
 				CurrentTetromino.Translate(Vector2Int.Left);
 			}
-			else if(input.IsAction("move_right"))
+			else if(input.IsActionPressed("move_right"))
 			{
 				CurrentTetromino.Translate(Vector2Int.Right);
 			}
@@ -101,6 +101,7 @@ public class GameBoard : ColorRect
 				TimeSinceLastMovement = 0;
 				if(!CurrentTetromino.Translate(Vector2Int.Down))
 				{
+					CurrentTetromino.Locked = true;
 					foreach(Vector2Int relativeMinoPos in CurrentTetromino.MinoTiles)
 					{
 						Vector2Int minoPosition = CurrentTetromino.Position + relativeMinoPos;
@@ -125,17 +126,18 @@ public class GameBoard : ColorRect
 					}
 				}
 			}
-			foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+			if(CurrentTetromino != null)
 			{
-				Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
-				if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+				foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
 				{
-					SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
-					SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+					Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
+					if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+					{
+						SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
+						SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+					}
 				}
 			}
-			if(CurrentTetromino.Position.y < -3)
-				CurrentTetromino = null;
 		}
 	}
 
