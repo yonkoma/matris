@@ -9,9 +9,11 @@ public class GameBoard : TextureRect
 	public const int BOARD_HEIGHT = 20;
 	private const float DROP_RATE = 0.30f;
 	private const float SOFT_DROP_RATE = 0.08f;
+	private static readonly Color WHITE = new Color(1, 1, 1);
+	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
 	private TileMap BoardTileMap;
-	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT, BOARD_WIDTH];
+	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT + 5, BOARD_WIDTH];
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
 	private BagGenerator BagGen = new BagGenerator();
 	private Tetromino CurrentTetromino;
@@ -19,21 +21,23 @@ public class GameBoard : TextureRect
 	private bool GameIsPaused = true;
 	private float TimeSinceLastMovement = 0;
 	private float DropRate = DROP_RATE;
+	private ImageTexture TetrominoTexture;
 
 	public override void _Ready()
 	{
 		// Called every time the node is added to the scene.
 		// Initialization here
 		// Initializes Tetris board and Grid
-		Texture tetrominoTexture = (Texture)GD.Load("res://images/tetrominos.png");
-		int tetrominoSize = tetrominoTexture.GetHeight();
-		for(int row = 0; row < TetrisBoard.GetLength(0); row++)
+		TetrominoTexture = new ImageTexture();
+		TetrominoTexture.Load("res://images/tetrominos.png");
+		int tetrominoSize = TetrominoTexture.GetHeight();
+		for(int row = 0; row < BOARD_HEIGHT; row++)
 		{
-			for(int col = 0; col < TetrisBoard.GetLength(1); col++)
+			for(int col = 0; col < BOARD_WIDTH; col++)
 			{
 				TetrisBoard[row, col] = Mino.Empty;
 				SpriteBoard[row, col] = new Sprite();
-				SpriteBoard[row, col].Texture = tetrominoTexture;
+				SpriteBoard[row, col].Texture = TetrominoTexture;
 				SpriteBoard[row, col].Centered = false;
 				SpriteBoard[row, col].Hframes = 8;
 				SpriteBoard[row, col].Position = new Vector2(col * tetrominoSize, (BOARD_HEIGHT - row - 1) * tetrominoSize);
@@ -112,9 +116,9 @@ public class GameBoard : TextureRect
 				}
 			}
 
-			for(int row = 0; row < TetrisBoard.GetLength(0); row++)
+			for(int row = 0; row < BOARD_HEIGHT; row++)
 			{
-				for(int col = 0; col < TetrisBoard.GetLength(1); col++)
+				for(int col = 0; col < BOARD_WIDTH; col++)
 				{
 					if(TetrisBoard[row, col] == Mino.Empty)
 					{
@@ -124,11 +128,24 @@ public class GameBoard : TextureRect
 					{
 						SpriteBoard[row, col].Visible = true;
 						SpriteBoard[row, col].Frame = (int)TetrisBoard[row, col];
+						SpriteBoard[row, col].Modulate = WHITE;
 					}
 				}
 			}
 			if(CurrentTetromino != null)
 			{
+				Vector2Int hardDropOffset = CurrentTetromino.GetHardDropOffset();
+				foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+				{
+					Vector2Int minoPosition = CurrentTetromino.Position + hardDropOffset + relativeMino;
+					if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+					{
+						SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
+						SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+						SpriteBoard[minoPosition.y, minoPosition.x].Modulate = DROP_PREVIEW_COLOR;
+					}
+				}
+
 				foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
 				{
 					Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
@@ -136,6 +153,7 @@ public class GameBoard : TextureRect
 					{
 						SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
 						SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+						SpriteBoard[minoPosition.y, minoPosition.x].Modulate = WHITE;
 					}
 				}
 			}
