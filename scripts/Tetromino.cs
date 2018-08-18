@@ -28,7 +28,7 @@ public class Tetromino
 	{
 		this.Type = type;
 		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
-		this.Position = new Vector2Int(4, 23);
+		this.Position = new Vector2Int(4, 21);
 		CurrentRotationState = Rotation.Up;
 	}
 

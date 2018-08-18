@@ -116,46 +116,60 @@ public class GameBoard : TextureRect
 				}
 			}
 
-			for(int row = 0; row < BOARD_HEIGHT; row++)
-			{
-				for(int col = 0; col < BOARD_WIDTH; col++)
-				{
-					if(TetrisBoard[row, col] == Mino.Empty)
-					{
-						SpriteBoard[row, col].Visible = false;
-					}
-					else
-					{
-						SpriteBoard[row, col].Visible = true;
-						SpriteBoard[row, col].Frame = (int)TetrisBoard[row, col];
-						SpriteBoard[row, col].Modulate = WHITE;
-					}
-				}
-			}
+			SetTetrisBoardSprites();
 			if(CurrentTetromino != null)
 			{
-				Vector2Int hardDropOffset = CurrentTetromino.GetHardDropOffset();
-				foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
-				{
-					Vector2Int minoPosition = CurrentTetromino.Position + hardDropOffset + relativeMino;
-					if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
-					{
-						SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
-						SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
-						SpriteBoard[minoPosition.y, minoPosition.x].Modulate = DROP_PREVIEW_COLOR;
-					}
-				}
+				SetDropPreviewSprites();
+				SetTetrominoSprites();
+			}
+		}
+	}
 
-				foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+	private void SetTetrisBoardSprites()
+	{
+		for(int row = 0; row < BOARD_HEIGHT; row++)
+		{
+			for(int col = 0; col < BOARD_WIDTH; col++)
+			{
+				if(TetrisBoard[row, col] == Mino.Empty)
 				{
-					Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
-					if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
-					{
-						SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
-						SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
-						SpriteBoard[minoPosition.y, minoPosition.x].Modulate = WHITE;
-					}
+					SpriteBoard[row, col].Visible = false;
 				}
+				else
+				{
+					SpriteBoard[row, col].Visible = true;
+					SpriteBoard[row, col].Frame = (int)TetrisBoard[row, col];
+					SpriteBoard[row, col].Modulate = WHITE;
+				}
+			}
+		}
+	}
+
+	private void SetDropPreviewSprites()
+	{
+		Vector2Int hardDropOffset = CurrentTetromino.GetHardDropOffset();
+		foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+		{
+			Vector2Int minoPosition = CurrentTetromino.Position + hardDropOffset + relativeMino;
+			if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+			{
+				SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
+				SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+				SpriteBoard[minoPosition.y, minoPosition.x].Modulate = DROP_PREVIEW_COLOR;
+			}
+		}
+	}
+
+	private void SetTetrominoSprites()
+	{
+		foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+		{
+			Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
+			if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+			{
+				SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
+				SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+				SpriteBoard[minoPosition.y, minoPosition.x].Modulate = WHITE;
 			}
 		}
 	}
