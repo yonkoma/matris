@@ -29,10 +29,12 @@ public class BagGenerator
 
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
+	private Mino[,] TetrisBoard;
 	private Queue<Tetromino> TetrominoBag = new Queue<Tetromino>();
 
-	public BagGenerator()
+	public BagGenerator(Mino[,] tetrisBoard)
 	{
+		this.TetrisBoard = tetrisBoard;
 		AddNewBag();
 	}
 
@@ -83,7 +85,7 @@ public class BagGenerator
 				default:
 					throw new Exception("Tried to create tetromino of unknown type");
 			}
-			TetrominoBag.Enqueue(new Tetromino(addedTetrominoType, addedTetrominoMinos));
+			TetrominoBag.Enqueue(new Tetromino(addedTetrominoType, addedTetrominoMinos, this.TetrisBoard));
 			drawingBag.RemoveAt(chosenTetrominoIndex);
 		}
 	}

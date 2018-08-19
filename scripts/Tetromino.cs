@@ -18,18 +18,31 @@ public class Tetromino
 
 	public TetrominoType Type { get; }
 	public Vector2Int[] MinoTiles { get; private set; }
-	public Vector2Int Position { get; private set; }
-	public Mino[,] TetrisBoard { get; set; }
+	private Vector2Int _position;
+	public Vector2Int Position {
+		get { return _position; }
+		private set
+		{
+			_position = value;
+			IsTouchingBottom = !IsValidMovement(Vector2Int.Down, MinoTiles);
+		}
+	}
+	public Mino[,] TetrisBoard { get; }
 	public bool Locked { get; set; } = false;
+	public bool IsTouchingBottom { get; private set; }
 	private Rotation CurrentRotationState;
-	private Mino[] BottomMinos;
 
-	public Tetromino(TetrominoType type, Vector2Int[] minoTiles)
+	public Tetromino(TetrominoType type, Vector2Int[] minoTiles, Mino[,] tetrisBoard)
 	{
 		this.Type = type;
 		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
-		this.Position = new Vector2Int(4, 21);
+		this.TetrisBoard = tetrisBoard;
 		CurrentRotationState = Rotation.Up;
+	}
+
+	public void Spawn(Vector2Int position)
+	{
+		this.Position = position;
 	}
 
 	public bool Translate(Vector2Int vec)
@@ -37,7 +50,7 @@ public class Tetromino
 		if(!Locked)
 		{
 			Locked = true;
-			if(TestMovement(vec, MinoTiles))
+			if(IsValidMovement(vec, MinoTiles))
 			{
 				this.Position += vec;
 				Locked = false;
@@ -48,12 +61,12 @@ public class Tetromino
 		return false;
 	}
 
-	public void Rotate(Rotation dir)
+	public bool Rotate(Rotation dir)
 	{
+		bool rotatedSuccessfully = false;
 		if(!Locked)
 		{
 			Locked = true;
-			bool rotatedSuccessfully = true;
 			Vector2Int[] newMinoTiles = new Vector2Int[MinoTiles.Length];
 			Rotation newRotationState = CurrentRotationState + dir;
 			for(int i = 0; i < MinoTiles.Length; i++)
@@ -78,7 +91,7 @@ public class Tetromino
 			for(int i = 0; i < kickTranslationCount; i++)
 			{
 				Vector2Int kickTranslation = offsets[CurrentRotationState][i] - offsets[newRotationState][i];
-				if(rotatedSuccessfully = TestMovement(kickTranslation, newMinoTiles))
+				if(rotatedSuccessfully = IsValidMovement(kickTranslation, newMinoTiles))
 				{
 					this.Position += kickTranslation;
 					break;
@@ -95,6 +108,7 @@ public class Tetromino
 			}
 			Locked = false;
 		}
+		return rotatedSuccessfully;
 	}
 
 	public void HardDrop()
@@ -110,18 +124,18 @@ public class Tetromino
 	public Vector2Int GetHardDropOffset()
 	{
 		Vector2Int offset = Vector2Int.Zero;
-		while(TestMovement(Vector2Int.Down + offset, MinoTiles))
+		while(IsValidMovement(Vector2Int.Down + offset, MinoTiles))
 		{
 			offset += Vector2Int.Down;
 		}
 		return offset;
 	}
 
-	private bool TestMovement(Vector2Int vec, Vector2Int[] minos)
+	private bool IsValidMovement(Vector2Int vec, Vector2Int[] minos)
 	{
 		for(int i = 0; i < minos.Length; i++)
 		{
-			Vector2Int newPos = Position + minos[i] + vec;
+			Vector2Int newPos = this.Position + vec + minos[i];
 			if(newPos.x < 0 || newPos.x >= GameBoard.BOARD_WIDTH || newPos.y < 0 ||
 			   (newPos.y < GameBoard.BOARD_HEIGHT && TetrisBoard[newPos.y, newPos.x] != Mino.Empty))
 			{

@@ -9,17 +9,22 @@ public class GameBoard : TextureRect
 	public const int BOARD_HEIGHT = 20;
 	private const float DROP_RATE = 0.30f;
 	private const float SOFT_DROP_RATE = 0.08f;
+	private const float LOCK_DELAY = 0.5f;
+	private const int MAX_LOCK_DELAY_RESETS = 15;
 	private static readonly Color WHITE = new Color(1, 1, 1);
 	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
 	private TileMap BoardTileMap;
 	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT + 5, BOARD_WIDTH];
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
-	private BagGenerator BagGen = new BagGenerator();
+	private BagGenerator BagGen;
 	private Tetromino CurrentTetromino;
 	private Tetromino FrozenTetromino;
 	private bool GameIsPaused = true;
 	private float TimeSinceLastMovement = 0;
+	private float RemainingLockDelay = LOCK_DELAY;
+	private bool TetrominoHasTouchedBottom = false;
+	private int RemainingLockResets = MAX_LOCK_DELAY_RESETS;
 	private float DropRate = DROP_RATE;
 	private ImageTexture TetrominoTexture;
 
@@ -45,6 +50,7 @@ public class GameBoard : TextureRect
 				this.AddChild(SpriteBoard[row, col]);
 			}
 		}
+		BagGen = new BagGenerator(this.TetrisBoard);
 		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new object[] { true });
 		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new object[] { false });
 	}
@@ -60,20 +66,24 @@ public class GameBoard : TextureRect
 		{
 			if(input.IsActionPressed("move_left"))
 			{
-				CurrentTetromino.Translate(Vector2Int.Left);
+				if(CurrentTetromino.Translate(Vector2Int.Left))
+					ResetLockDelay();
 			}
 			else if(input.IsActionPressed("move_right"))
 			{
-				CurrentTetromino.Translate(Vector2Int.Right);
+				if(CurrentTetromino.Translate(Vector2Int.Right))
+					ResetLockDelay();
 			}
 
 			if(input.IsActionPressed("rotate_left"))
 			{
-				CurrentTetromino.Rotate(Rotation.Left);
+				if(CurrentTetromino.Rotate(Rotation.Left))
+					ResetLockDelay();
 			}
 			else if(input.IsActionPressed("rotate_right"))
 			{
-				CurrentTetromino.Rotate(Rotation.Right);
+				if(CurrentTetromino.Rotate(Rotation.Right))
+					ResetLockDelay();
 			}
 		}
 		if(input.IsActionPressed("soft_drop"))
@@ -103,13 +113,23 @@ public class GameBoard : TextureRect
 			if(CurrentTetromino == null)
 			{
 				CurrentTetromino = BagGen.Dequeue();
-				CurrentTetromino.TetrisBoard = TetrisBoard;
+				CurrentTetromino.Spawn(new Vector2Int(4, 21));
 			}
 
 			if(TimeSinceLastMovement > DropRate)
 			{
 				TimeSinceLastMovement = 0;
-				if(!CurrentTetromino.Translate(Vector2Int.Down))
+				if(CurrentTetromino.Translate(Vector2Int.Down))
+				{
+					RemainingLockDelay = LOCK_DELAY;
+					RemainingLockResets = MAX_LOCK_DELAY_RESETS;
+				}
+			}
+
+			if(TetrominoHasTouchedBottom && CurrentTetromino.IsTouchingBottom)
+			{
+				RemainingLockDelay -= delta;
+				if(RemainingLockDelay <= 0)
 				{
 					LockPiece(CurrentTetromino);
 					CurrentTetromino = null;
@@ -119,9 +139,19 @@ public class GameBoard : TextureRect
 			SetTetrisBoardSprites();
 			if(CurrentTetromino != null)
 			{
+				TetrominoHasTouchedBottom = CurrentTetromino.IsTouchingBottom;
 				SetDropPreviewSprites();
 				SetTetrominoSprites();
 			}
+		}
+	}
+
+	private void ResetLockDelay()
+	{
+		if(RemainingLockResets > 0)
+		{
+			RemainingLockResets--;
+			RemainingLockDelay = LOCK_DELAY;
 		}
 	}
 
