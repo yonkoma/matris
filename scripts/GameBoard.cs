@@ -51,8 +51,8 @@ public class GameBoard : TextureRect
 			}
 		}
 		BagGen = new BagGenerator(this.TetrisBoard);
-		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new object[] { true });
-		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new object[] { false });
+		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new Godot.Array { true });
+		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new Godot.Array { false });
 	}
 
 	public void OnPlayPause(bool startedPlaying)
