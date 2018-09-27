@@ -1,0 +1,19 @@
+#padding: 11
+#spacing: 50
+#title: GameFlow
+#bendSize: 0.6
+#direction: right
+[Game|
+  [<start>begin]->[New Tetromino]
+  [New Tetromino]->[Place]
+  [Place]->[New Tetromino]
+  [Place]->[Top Out]
+  [Top Out]->[<end>end]
+]
+[Home Screen]->[Game]
+[Game]->[Game Over]
+[Game Over]->[Game]
+[Game Over]->[Home Screen]
+[Home Screen]->[Options]
+[Options]->[Home Screen]
+

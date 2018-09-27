@@ -1,0 +1,22 @@
+#padding: 11
+#spacing: 55
+#title: ClassStructure
+#bendSize: 0.6
+#direction: right
+#arrowSize: 0.6
+[GameScene]+->[GameBoard]
+[GameScene]+->[PlayPrompt]
+[GameScene]+->[ScoreLabel]
+[GameScene]+->[TimeLabel]
+
+[GameBoard]-->[BagGenerator]
+[GameBoard]-->[Tetromino]
+[GameBoard]-->[Vector2Int]
+[Tetromino]-->[Vector2Int]
+[BagGenerator]-->[Vector2Int]
+[BagGenerator]-->[Tetromino]
+[Tetromino]-->[Rotation]
+[Vector2Int]-->[Rotation]
+
+[HomeScene]->[GameScene]
+[HomeScene]->[OptionsScene]
