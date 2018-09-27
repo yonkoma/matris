@@ -16,6 +16,9 @@ public class GameScene : Node2D
 		// Initialization here
 	}
 
+	/// <summary>
+	/// Captures pressing the play/pause button
+	/// </summary>
 	public override void _Input(InputEvent x)
 	{
 		if(x.IsActionPressed("play_pause"))

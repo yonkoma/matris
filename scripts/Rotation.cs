@@ -1,3 +1,8 @@
+/// <summary>
+/// A struct which stores the orientation of a tetromino.
+/// Rotation.Up is the neutral state, Right or Left can be added with the + operator to rotate pieces.
+/// Rotation automatically wraps.
+/// </summary>
 public struct Rotation
 {
 	private int state;

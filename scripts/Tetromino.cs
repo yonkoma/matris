@@ -4,6 +4,10 @@ using static BagGenerator;
 
 public class Tetromino
 {
+	/// <summary>
+	/// A type of tetromino.
+	/// Uses the same values as the mino colors, so they can be casted to mino colors later on.
+	/// </summary>
 	public enum TetrominoType
 	{
 		Z = Mino.Red,
@@ -31,6 +35,9 @@ public class Tetromino
 	public bool IsTouchingBottom { get; private set; }
 	private Rotation CurrentRotationState;
 
+	/// <summary>
+	/// Create a new tetromino
+	/// </summary>
 	public Tetromino(TetrominoType type, Vector2Int[] minoTiles, Mino[,] tetrisBoard)
 	{
 		this.Type = type;
@@ -39,11 +46,18 @@ public class Tetromino
 		CurrentRotationState = Rotation.Up;
 	}
 
+	/// <summary>
+	/// Spawn the tetromino at the given position
+	/// </summary>
 	public void Spawn(Vector2Int position)
 	{
 		this.Position = position;
 	}
 
+	/// <summary>
+	/// Translate the tetromino by the given vector and return whether the translation was successful.
+	/// Fails if tetromino is currently locked.
+	/// </summary>
 	public bool Translate(Vector2Int vec)
 	{
 		if(!Locked)
@@ -60,6 +74,10 @@ public class Tetromino
 		return false;
 	}
 
+	/// <summary>
+	/// Rotate the tetromino in the given direction and return whether the rotation was successful.
+	/// Tries to apply SRS kicks. Fails if no kick was possible or the tetromino is locked.
+	/// </summary>
 	public bool Rotate(Rotation dir)
 	{
 		bool rotatedSuccessfully = false;
@@ -110,6 +128,9 @@ public class Tetromino
 		return rotatedSuccessfully;
 	}
 
+	/// <summary>
+	/// Hard drop the tetromino.
+	/// </summary>
 	public void HardDrop()
 	{
 		if(!Locked)
@@ -120,6 +141,9 @@ public class Tetromino
 		}
 	}
 
+	/// <summary>
+	/// Find the offset to the current position where the tetromino would end up if hard dropped.
+	/// </summary>
 	public Vector2Int GetHardDropOffset()
 	{
 		Vector2Int offset = Vector2Int.Zero;
@@ -130,6 +154,10 @@ public class Tetromino
 		return offset;
 	}
 
+	/// <summary>
+	/// Checks if moving the given minos are in all in a valid position after moving them by the given vector.
+	/// Does not check intermediate steps along the vector.
+	/// </summary>
 	private bool IsValidMovement(Vector2Int vec, Vector2Int[] minos)
 	{
 		for(int i = 0; i < minos.Length; i++)
@@ -144,6 +172,7 @@ public class Tetromino
 		return true;
 	}
 
+	/// Rotation offsets for pieces other than I and O.
 	private static readonly Dictionary<Rotation, Vector2Int[]> RotationOffsets = new Dictionary<Rotation, Vector2Int[]>
 	{
 		[Rotation.Up] = new [] { Vector2Int.Zero, Vector2Int.Zero, Vector2Int.Zero, Vector2Int.Zero, Vector2Int.Zero },
@@ -160,6 +189,7 @@ public class Tetromino
 			                       new Vector2Int(-1, 2) },
 	};
 
+	/// Rotation offsets for I pieces.
 	private static readonly Dictionary<Rotation, Vector2Int[]> RotationOffsets_I = new Dictionary<Rotation, Vector2Int[]>
 	{
 		[Rotation.Up] = new [] { Vector2Int.Zero,
@@ -184,6 +214,7 @@ public class Tetromino
 			                       new Vector2Int(0, 2) },
 	};
 
+	/// Rotation offsets for O pieces. Only used to adjust for wobble when rotating the O.
 	private static readonly Dictionary<Rotation, Vector2Int[]> RotationOffsets_O = new Dictionary<Rotation, Vector2Int[]>
 	{
 		[Rotation.Up] = new [] { Vector2Int.Zero },

@@ -1,6 +1,9 @@
 using System;
 using Godot;
 
+/// <summary>
+/// An equivalent of the Vector2 class using only ints.
+/// </summary>
 public struct Vector2Int : IEquatable<Vector2Int>
 {
 	public int x { get; set; }

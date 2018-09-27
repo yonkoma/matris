@@ -6,6 +6,9 @@ using static Tetromino;
 
 public class BagGenerator
 {
+	/// <summary>
+	/// A mino that can be in a cell of the board
+	/// </summary>
 	public enum Mino
 	{
 		Empty  = -1,
@@ -19,6 +22,7 @@ public class BagGenerator
 		Gray   = 7,
 	};
 
+	/// Vector arrays for the seven tetromino
 	private static readonly Vector2Int[] Z_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(0, 1), new Vector2Int(0, 0), new Vector2Int(1, 0) };
 	private static readonly Vector2Int[] S_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1) };
 	private static readonly Vector2Int[] J_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0) };
@@ -27,17 +31,25 @@ public class BagGenerator
 	private static readonly Vector2Int[] I_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0) };
 	private static readonly Vector2Int[] T_TETROMINO = { new Vector2Int(0, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(1, 0) };
 
+	/// A bag of all seven tetromino
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
 	private Mino[,] TetrisBoard;
 	private Queue<Tetromino> TetrominoBag = new Queue<Tetromino>();
 
+	/// <summary>
+	/// Make a new bag generator and add one bag to it.
+	/// </summary>
 	public BagGenerator(Mino[,] tetrisBoard)
 	{
 		this.TetrisBoard = tetrisBoard;
 		AddNewBag();
 	}
 
+	/// <summary>
+	/// Dequeue a tetromino from the generator's queue.
+	/// Add another bag to the queue if there are less than 7 left.
+	/// </summary>
 	public Tetromino Dequeue()
 	{
 		if(TetrominoBag.Count < 7)
@@ -45,15 +57,23 @@ public class BagGenerator
 		return TetrominoBag.Dequeue();
 	}
 
+	/// <summary>
+	/// Find the tetromino at the given index in the generator's queue.
+	/// </summary>
 	public Tetromino ElementAt(int index)
 	{
 		return TetrominoBag.ElementAt(index);
 	}
 
+	/// <summary>
+	/// Add a new bag of 7 tetrominos to the bag generator queue.
+	/// </summary>
 	private void AddNewBag()
 	{
+		// Copy a new bag of all 7 pieces.
 		List<TetrominoType> drawingBag = new List<TetrominoType>(STANDARD_BAG);
 		Random rand = new Random();
+		// Choose random tetrominos from the bag and add them to the generator queue.
 		for(int i = drawingBag.Count; i > 0; i--)
 		{
 			int chosenTetrominoIndex = rand.Next(i);

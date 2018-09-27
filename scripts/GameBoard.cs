@@ -31,7 +31,6 @@ public class GameBoard : TextureRect
 	public override void _Ready()
 	{
 		// Called every time the node is added to the scene.
-		// Initialization here
 		// Initializes Tetris board and Grid
 		TetrominoTexture = new ImageTexture();
 		TetrominoTexture.Load("res://images/tetrominos.png");
@@ -60,6 +59,7 @@ public class GameBoard : TextureRect
 		GameIsPaused = !startedPlaying;
 	}
 
+	/// Handles inputs for moving the tetromino
 	public override void _Input(InputEvent input)
 	{
 		if(CurrentTetromino != null && !GameIsPaused)
@@ -105,17 +105,19 @@ public class GameBoard : TextureRect
 	public override void _Process(float delta)
 	{
 		// Called every frame. Delta is time since last frame.
-		// Update game logic here.
+		// Only run loop if game isn't paused
 		if(!GameIsPaused)
 		{
 			TimeSinceLastMovement += delta;
 
+			// If we don't have a tetromino anymore, get a new one
 			if(CurrentTetromino == null)
 			{
 				CurrentTetromino = BagGen.Dequeue();
 				CurrentTetromino.Spawn(new Vector2Int(4, 21));
 			}
 
+			// If enough time has elapsed, move the tetromino down one block
 			if(TimeSinceLastMovement > DropRate)
 			{
 				TimeSinceLastMovement = 0;
@@ -126,6 +128,7 @@ public class GameBoard : TextureRect
 				}
 			}
 
+			// Check if the tetromino should be locked in place
 			if(TetrominoHasTouchedBottom && CurrentTetromino.IsTouchingBottom)
 			{
 				RemainingLockDelay -= delta;
@@ -146,6 +149,9 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	/// <summary>
+	/// Resets the lock delay if there are resets remaining.
+	/// </summary>
 	private void ResetLockDelay()
 	{
 		if(RemainingLockResets > 0)
@@ -155,6 +161,9 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	/// <summary>
+	/// Set all the sprites according to the tetris board data.
+	/// </summary>
 	private void SetTetrisBoardSprites()
 	{
 		for(int row = 0; row < BOARD_HEIGHT; row++)
@@ -175,6 +184,9 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	/// <summary>
+	/// Set the sprites for the drop preview.
+	/// </summary>
 	private void SetDropPreviewSprites()
 	{
 		Vector2Int hardDropOffset = CurrentTetromino.GetHardDropOffset();
@@ -190,6 +202,9 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	/// <summary>
+	/// Set the sprites for the current tetromino.
+	/// </summary>
 	private void SetTetrominoSprites()
 	{
 		foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
@@ -204,6 +219,10 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	/// <summary>
+	/// Lock the given tetromino in place.
+	/// Adds all it's minos to the tetris board.
+	/// </summary>
 	public void LockPiece(Tetromino piece)
 	{
 		piece.Locked = true;
@@ -214,13 +233,5 @@ public class GameBoard : TextureRect
 		}
 	}
 
-	// Override draw function to draw the grid
-	// Grid is drawn by taking the number of Tetromino slots and drawing lines long enough to match
-	public override void _Draw()
-	{
-
-
-
-	}
 }
 
