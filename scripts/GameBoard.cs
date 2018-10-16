@@ -7,6 +7,7 @@ public class GameBoard : TextureRect
 {
 	public const int BOARD_WIDTH = 10;
 	public const int BOARD_HEIGHT = 20;
+	public const int GHOST_BOARD_HEIGHT = BOARD_HEIGHT + 5;
 	private const float DROP_RATE = 0.30f;
 	private const float SOFT_DROP_RATE = 0.08f;
 	private const float LOCK_DELAY = 0.5f;
@@ -14,13 +15,13 @@ public class GameBoard : TextureRect
 	private static readonly Color WHITE = new Color(1, 1, 1);
 	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
-	private TileMap BoardTileMap;
-	private Mino[,] TetrisBoard = new Mino[BOARD_HEIGHT + 5, BOARD_WIDTH];
+	private Mino[,] TetrisBoard = new Mino[GHOST_BOARD_HEIGHT, BOARD_WIDTH];
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
 	private BagGenerator BagGen;
 	private Tetromino CurrentTetromino;
 	private Tetromino FrozenTetromino;
 	private bool GameIsPaused = true;
+	private bool GameIsOver = false;
 	private float TimeSinceLastMovement = 0;
 	private float RemainingLockDelay = LOCK_DELAY;
 	private bool TetrominoHasTouchedBottom = false;
@@ -35,11 +36,10 @@ public class GameBoard : TextureRect
 		TetrominoTexture = new ImageTexture();
 		TetrominoTexture.Load("res://images/tetrominos.png");
 		int tetrominoSize = TetrominoTexture.GetHeight();
-		for(int row = 0; row < BOARD_HEIGHT; row++)
+		for(int col = 0; col < BOARD_WIDTH; col++)
 		{
-			for(int col = 0; col < BOARD_WIDTH; col++)
+			for(int row = 0; row < BOARD_HEIGHT; row++)
 			{
-				TetrisBoard[row, col] = Mino.Empty;
 				SpriteBoard[row, col] = new Sprite();
 				SpriteBoard[row, col].Texture = TetrominoTexture;
 				SpriteBoard[row, col].Centered = false;
@@ -47,6 +47,10 @@ public class GameBoard : TextureRect
 				SpriteBoard[row, col].Position = new Vector2(col * tetrominoSize, (BOARD_HEIGHT - row - 1) * tetrominoSize);
 				SpriteBoard[row, col].Visible = false;
 				this.AddChild(SpriteBoard[row, col]);
+			}
+			for(int row = 0; row < GHOST_BOARD_HEIGHT; row++)
+			{
+				TetrisBoard[row, col] = Mino.Empty;
 			}
 		}
 		BagGen = new BagGenerator(this.TetrisBoard);
@@ -62,7 +66,7 @@ public class GameBoard : TextureRect
 	/// Handles inputs for moving the tetromino
 	public override void _Input(InputEvent input)
 	{
-		if(CurrentTetromino != null && !GameIsPaused)
+		if(CurrentTetromino != null && !GameIsPaused && !GameIsOver)
 		{
 			if(input.IsActionPressed("move_left"))
 			{
@@ -85,6 +89,12 @@ public class GameBoard : TextureRect
 				if(CurrentTetromino.Rotate(Rotation.Right))
 					ResetLockDelay();
 			}
+			if(input.IsActionPressed("hard_drop"))
+			{
+				CurrentTetromino.HardDrop();
+				LockPiece(CurrentTetromino);
+				CurrentTetromino = null;
+			}
 		}
 		if(input.IsActionPressed("soft_drop"))
 		{
@@ -94,19 +104,13 @@ public class GameBoard : TextureRect
 		{
 			DropRate = DROP_RATE;
 		}
-		if(input.IsActionPressed("hard_drop"))
-		{
-			CurrentTetromino.HardDrop();
-			LockPiece(CurrentTetromino);
-			CurrentTetromino = null;
-		}
 	}
 
 	public override void _Process(float delta)
 	{
 		// Called every frame. Delta is time since last frame.
 		// Only run loop if game isn't paused
-		if(!GameIsPaused)
+		if(!GameIsPaused && !GameIsOver)
 		{
 			TimeSinceLastMovement += delta;
 
@@ -114,7 +118,10 @@ public class GameBoard : TextureRect
 			if(CurrentTetromino == null)
 			{
 				CurrentTetromino = BagGen.Dequeue();
-				CurrentTetromino.Spawn(new Vector2Int(4, 21));
+				if(!CurrentTetromino.Spawn(new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT + 1)))
+				{
+					OnGameOver();
+				}
 			}
 
 			// If enough time has elapsed, move the tetromino down one block
@@ -223,14 +230,28 @@ public class GameBoard : TextureRect
 	/// Lock the given tetromino in place.
 	/// Adds all it's minos to the tetris board.
 	/// </summary>
-	public void LockPiece(Tetromino piece)
+	private void LockPiece(Tetromino piece)
 	{
 		piece.Locked = true;
+		bool fullyInGhostZone = true;
 		foreach(Vector2Int relativeMinoPos in piece.MinoTiles)
 		{
 			Vector2Int minoPosition = piece.Position + relativeMinoPos;
+			fullyInGhostZone = fullyInGhostZone && minoPosition.y >= BOARD_HEIGHT;
 			TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
 		}
+		if(fullyInGhostZone)
+		{
+			OnGameOver();
+		}
+	}
+
+	private void OnGameOver()
+	{
+		GameIsOver = true;
+		SetTetrisBoardSprites();
+		CanvasItem blurLayer = (CanvasItem)GetNode("/root/GameRoot/Blur");
+		blurLayer.Visible = true;
 	}
 
 }

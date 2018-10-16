@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using static BagGenerator;
+using static Godot.GD;
 
 public class Tetromino
 {
@@ -47,11 +48,13 @@ public class Tetromino
 	}
 
 	/// <summary>
-	/// Spawn the tetromino at the given position
+	/// Spawn the tetromino at the given position.
+	/// Returns false if the tetromino could not be spawned.
 	/// </summary>
-	public void Spawn(Vector2Int position)
+	public bool Spawn(Vector2Int position)
 	{
 		this.Position = position;
+		return IsValidMovement(Vector2Int.Zero, this.MinoTiles);
 	}
 
 	/// <summary>
@@ -164,7 +167,7 @@ public class Tetromino
 		{
 			Vector2Int newPos = this.Position + vec + minos[i];
 			if(newPos.x < 0 || newPos.x >= GameBoard.BOARD_WIDTH || newPos.y < 0 ||
-			   (newPos.y < GameBoard.BOARD_HEIGHT && TetrisBoard[newPos.y, newPos.x] != Mino.Empty))
+			   (newPos.y < GameBoard.GHOST_BOARD_HEIGHT && TetrisBoard[newPos.y, newPos.x] != Mino.Empty))
 			{
 				return false;
 			}
