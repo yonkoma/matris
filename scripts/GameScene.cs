@@ -12,8 +12,8 @@ public class GameScene : Node2D
 
 	public override void _Ready()
 	{
-		// Called every time the node is added to the scene.
-		// Initialization here
+		GetNode("GameOverMenu/ButtonContainer/PlayAgainButton").Connect("pressed", this, nameof(OnPlayAgain));
+		GetNode("GameOverMenu/ButtonContainer/MainMenuButton").Connect("pressed", this, nameof(OnMainMenu));
 	}
 
 	/// <summary>
@@ -26,5 +26,15 @@ public class GameScene : Node2D
 			EmitSignal(GameIsPaused ? nameof(PlaySignal) : nameof(PauseSignal));
 			GameIsPaused = !GameIsPaused;
 		}
+	}
+
+	public void OnPlayAgain()
+	{
+		GetTree().ChangeScene("res://scenes/GameScene.tscn");
+	}
+
+	public void OnMainMenu()
+	{
+		GetTree().ChangeScene("res://scenes/HomeScene.tscn");
 	}
 }

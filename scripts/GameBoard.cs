@@ -251,7 +251,9 @@ public class GameBoard : TextureRect
 		GameIsOver = true;
 		SetTetrisBoardSprites();
 		CanvasItem blurLayer = (CanvasItem)GetNode("/root/GameRoot/Blur");
+		CanvasItem gameOverMenu = (CanvasItem)GetNode("/root/GameRoot/GameOverMenu");
 		blurLayer.Visible = true;
+		gameOverMenu.Visible = true;
 	}
 
 }

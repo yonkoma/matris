@@ -15,6 +15,7 @@ _sections_unfolded = [ "shader_param" ]
 
 [node name="GameRoot" type="Node2D" index="0"]
 
+position = Vector2( 0, 1 )
 script = ExtResource( 1 )
 _sections_unfolded = [ "Material", "Pause", "Transform", "Visibility", "Z Index" ]
 
@@ -48,7 +49,93 @@ expand = true
 stretch_mode = 0
 _sections_unfolded = [ "Material" ]
 
-[node name="PlayPrompt" type="Label" parent="." index="2"]
+[node name="GameOverMenu" type="Panel" parent="." index="2"]
+
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 278.0
+margin_top = 247.0
+margin_right = 478.0
+margin_bottom = 487.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Grow Direction", "Margin" ]
+
+[node name="ButtonContainer" type="VBoxContainer" parent="GameOverMenu" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_constants/separation = 56
+alignment = 1
+_sections_unfolded = [ "Grow Direction", "custom_constants" ]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PlayAgainButton" type="Button" parent="GameOverMenu/ButtonContainer" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 72.0
+margin_right = 200.0
+margin_bottom = 92.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Play Again"
+flat = false
+align = 1
+
+[node name="MainMenuButton" type="Button" parent="GameOverMenu/ButtonContainer" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 148.0
+margin_right = 200.0
+margin_bottom = 168.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Main Menu"
+flat = false
+align = 1
+
+[node name="PlayPrompt" type="Label" parent="." index="3"]
 
 anchor_left = 0.0
 anchor_top = 0.0
