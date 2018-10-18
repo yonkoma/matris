@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="lodash.min.js"></script>
+	<script src="dagre.min.js"></script>
+	<script src="nomnoml.js"></script>
+	<style type="text/css">
+		#target-canvas {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="target-canvas"></canvas>
+	<script>
+		function loadFile(filePath) {
+			var result = null;
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", filePath, false);
+			xmlhttp.send();
+			if (xmlhttp.status==200) {
+				result = xmlhttp.responseText;
+			}
+			return result;
+		}
+		
+		var canvas = document.getElementById('target-canvas');
+		var source = loadFile("ClassStructure.noml")
+		nomnoml.draw(canvas, source, 3);
+	</script>
+</body>
