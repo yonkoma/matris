@@ -29,6 +29,9 @@ public class GameBoard : TextureRect
 	private float DropRate = DROP_RATE;
 	private ImageTexture TetrominoTexture;
 
+	[Signal]
+	delegate void GameOverSignal();
+
 	public override void _Ready()
 	{
 		// Called every time the node is added to the scene.
@@ -120,7 +123,7 @@ public class GameBoard : TextureRect
 				CurrentTetromino = BagGen.Dequeue();
 				if(!CurrentTetromino.Spawn(new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT + 1)))
 				{
-					OnGameOver();
+					GameOver();
 				}
 			}
 
@@ -242,18 +245,15 @@ public class GameBoard : TextureRect
 		}
 		if(fullyInGhostZone)
 		{
-			OnGameOver();
+			GameOver();
 		}
 	}
 
-	private void OnGameOver()
+	private void GameOver()
 	{
 		GameIsOver = true;
+		EmitSignal(nameof(GameOverSignal));
 		SetTetrisBoardSprites();
-		CanvasItem blurLayer = (CanvasItem)GetNode("/root/GameRoot/Blur");
-		CanvasItem gameOverMenu = (CanvasItem)GetNode("/root/GameRoot/GameOverMenu");
-		blurLayer.Visible = true;
-		gameOverMenu.Visible = true;
 	}
 
 }

@@ -14,6 +14,7 @@ public class GameScene : Node2D
 	{
 		GetNode("GameOverMenu/ButtonContainer/PlayAgainButton").Connect("pressed", this, nameof(OnPlayAgain));
 		GetNode("GameOverMenu/ButtonContainer/MainMenuButton").Connect("pressed", this, nameof(OnMainMenu));
+		GetNode("GameBoard").Connect("GameOverSignal", this, nameof(OnGameOver));
 	}
 
 	/// <summary>
@@ -36,5 +37,13 @@ public class GameScene : Node2D
 	public void OnMainMenu()
 	{
 		GetTree().ChangeScene("res://scenes/HomeScene.tscn");
+	}
+
+	public void OnGameOver()
+	{
+		CanvasItem blurLayer = (CanvasItem)GetNode("Blur");
+		CanvasItem gameOverMenu = (CanvasItem)GetNode("GameOverMenu");
+		blurLayer.Visible = true;
+		gameOverMenu.Visible = true;
 	}
 }
