@@ -20,6 +20,28 @@ public class Tetromino
 		T = Mino.Purple,
 	}
 
+	/// <summary>
+	/// Algorithm for rewarding spins.
+	/// </summary>
+	public enum SpinAlgorithm
+	{
+		FourPoint, // Currently only works properly for T-Pieces
+		Immobile,
+	}
+
+	/// <summary>
+	/// Spin types
+	/// </summary>
+	public enum SpinReward
+	{
+		Regular,
+		Mini,
+		None,
+	}
+
+	public static readonly List<TetrominoType> SpinBonusPieces = new List<TetrominoType> { TetrominoType.T };
+	public static readonly SpinAlgorithm SpinAlgo = SpinAlgorithm.FourPoint;
+
 	public TetrominoType Type { get; }
 	public Vector2Int[] MinoTiles { get; private set; }
 	private Vector2Int _position;
@@ -34,6 +56,7 @@ public class Tetromino
 	public Mino[,] TetrisBoard { get; }
 	public bool Locked { get; set; } = false;
 	public bool IsTouchingBottom { get; private set; }
+	public SpinReward CurrentSpinReward { get; private set; }
 	private Rotation CurrentRotationState;
 
 	/// <summary>
@@ -108,9 +131,10 @@ public class Tetromino
 			}
 
 			int kickTranslationCount = offsets[CurrentRotationState].Length;
+			Vector2Int kickTranslation = Vector2Int.Zero;
 			for(int i = 0; i < kickTranslationCount; i++)
 			{
-				Vector2Int kickTranslation = offsets[CurrentRotationState][i] - offsets[newRotationState][i];
+				kickTranslation = offsets[CurrentRotationState][i] - offsets[newRotationState][i];
 				if(rotatedSuccessfully = IsValidMovement(kickTranslation, newMinoTiles))
 				{
 					this.Position += kickTranslation;
@@ -125,10 +149,44 @@ public class Tetromino
 				{
 					MinoTiles[i] = newMinoTiles[i];
 				}
+				this.CurrentSpinReward = CheckForSpinReward(kickTranslation);
 			}
 			Locked = false;
 		}
 		return rotatedSuccessfully;
+	}
+
+	private SpinReward CheckForSpinReward(Vector2Int kickTranslation)
+	{
+		if(SpinBonusPieces.Contains(this.Type))
+		{
+			switch(SpinAlgo)
+			{
+				case SpinAlgorithm.FourPoint:
+					Vector2Int[] corners = {
+						Vector2Int.Up + Vector2Int.Right,
+						Vector2Int.Up + Vector2Int.Left,
+						Vector2Int.Down + Vector2Int.Right,
+						Vector2Int.Down + Vector2Int.Right,
+					};
+					int filledCorners = 0;
+					foreach(Vector2Int corner in corners)
+					{
+
+					}
+					return SpinReward.None;
+				case SpinAlgorithm.Immobile:
+					if(!IsValidMovement(Vector2Int.Up, MinoTiles) &&
+					   !IsValidMovement(Vector2Int.Left, MinoTiles) &&
+					   !IsValidMovement(Vector2Int.Right, MinoTiles) &&
+					   !IsValidMovement(Vector2Int.Down, MinoTiles))
+					{
+						return SpinReward.Regular;
+					}
+					break;
+			}
+		}
+		return SpinReward.None;
 	}
 
 	/// <summary>

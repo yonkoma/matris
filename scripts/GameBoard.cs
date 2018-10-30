@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using static Tetromino;
 using static BagGenerator;
 
@@ -237,11 +238,13 @@ public class GameBoard : TextureRect
 	{
 		piece.Locked = true;
 		bool fullyInGhostZone = true;
+		List<int> modifiedRows = new List<int>();
 		foreach(Vector2Int relativeMinoPos in piece.MinoTiles)
 		{
 			Vector2Int minoPosition = piece.Position + relativeMinoPos;
 			fullyInGhostZone = fullyInGhostZone && minoPosition.y >= BOARD_HEIGHT;
 			TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
+			modifiedRows.Add(minoPosition.y);
 		}
 		if(fullyInGhostZone)
 		{
@@ -249,6 +252,15 @@ public class GameBoard : TextureRect
 		}
 	}
 
+	private void checkLineClears(List<int> rows)
+	{
+
+	}
+
+	/// <summary>
+	/// Enter the game over state.
+	/// Emits the game over signal so retry buttons, etc. can be displayed.
+	/// </summary>
 	private void GameOver()
 	{
 		GameIsOver = true;
