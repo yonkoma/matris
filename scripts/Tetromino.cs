@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using static BagGenerator;
+using static TetrisBoard;
 using static Godot.GD;
 
 public class Tetromino
@@ -53,7 +54,7 @@ public class Tetromino
 			IsTouchingBottom = !IsValidMovement(Vector2Int.Down, MinoTiles);
 		}
 	}
-	public Mino[,] TetrisBoard { get; }
+	public TetrisBoard Board { get; }
 	public bool Locked { get; set; } = false;
 	public bool IsTouchingBottom { get; private set; }
 	public SpinReward CurrentSpinReward { get; private set; }
@@ -62,11 +63,11 @@ public class Tetromino
 	/// <summary>
 	/// Create a new tetromino
 	/// </summary>
-	public Tetromino(TetrominoType type, Vector2Int[] minoTiles, Mino[,] tetrisBoard)
+	public Tetromino(TetrominoType type, Vector2Int[] minoTiles, TetrisBoard board)
 	{
 		this.Type = type;
 		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
-		this.TetrisBoard = tetrisBoard;
+		this.Board = board;
 		CurrentRotationState = Rotation.Up;
 	}
 
@@ -92,6 +93,7 @@ public class Tetromino
 			if(IsValidMovement(vec, MinoTiles))
 			{
 				this.Position += vec;
+				this.CurrentSpinReward = SpinReward.None;
 				Locked = false;
 				return true;
 			}
@@ -163,6 +165,7 @@ public class Tetromino
 			switch(SpinAlgo)
 			{
 				case SpinAlgorithm.FourPoint:
+					// Check the four corners of the T
 					Vector2Int[] corners = {
 						Vector2Int.Up + Vector2Int.Right,
 						Vector2Int.Up + Vector2Int.Left,
@@ -172,7 +175,26 @@ public class Tetromino
 					int filledCorners = 0;
 					foreach(Vector2Int corner in corners)
 					{
-
+						if(Board[Position + corner] != Mino.Empty)
+						{
+							filledCorners++;
+						}
+					}
+					if(filledCorners >= 3)
+					{
+						// Check the two squares adjacent to the T's middle finger
+						Vector2Int topLeft = Position + (Vector2Int.Up + Vector2Int.Left).Rotated(this.CurrentRotationState);
+						Vector2Int topRight = Position + (Vector2Int.Up + Vector2Int.Right).Rotated(this.CurrentRotationState);
+						if(Board[topLeft] != Mino.Empty && Board[topRight] != Mino.Empty)
+						{
+							return SpinReward.Regular;
+						}
+						// Check if the T was kicked down to rows
+						if(kickTranslation.y == -2)
+						{
+							return SpinReward.Regular;
+						}
+						return SpinReward.Mini;
 					}
 					return SpinReward.None;
 				case SpinAlgorithm.Immobile:
@@ -224,8 +246,7 @@ public class Tetromino
 		for(int i = 0; i < minos.Length; i++)
 		{
 			Vector2Int newPos = this.Position + vec + minos[i];
-			if(newPos.x < 0 || newPos.x >= GameBoard.BOARD_WIDTH || newPos.y < 0 ||
-			   (newPos.y < GameBoard.GHOST_BOARD_HEIGHT && TetrisBoard[newPos.y, newPos.x] != Mino.Empty))
+			if(Board[newPos.y, newPos.x] != Mino.Empty)
 			{
 				return false;
 			}

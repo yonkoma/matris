@@ -58,6 +58,7 @@
     <Compile Include="scripts\BagGenerator.cs" />
     <Compile Include="scripts\Vector2Int.cs" />
     <Compile Include="scripts\Rotation.cs" />
+    <Compile Include="scripts\TetrisBoard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,25 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Tetromino;
+using static TetrisBoard;
 
 public class BagGenerator
 {
-	/// <summary>
-	/// A mino that can be in a cell of the board
-	/// </summary>
-	public enum Mino
-	{
-		Empty  = -1,
-		Red    = 0,
-		Green  = 1,
-		Blue   = 2,
-		Orange = 3,
-		Yellow = 4,
-		Cyan   = 5,
-		Purple = 6,
-		Gray   = 7,
-	};
-
 	/// Vector arrays for the seven tetromino
 	private static readonly Vector2Int[] Z_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(0, 1), new Vector2Int(0, 0), new Vector2Int(1, 0) };
 	private static readonly Vector2Int[] S_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1) };
@@ -34,15 +19,15 @@ public class BagGenerator
 	/// A bag of all seven tetromino
 	private static readonly List<TetrominoType> STANDARD_BAG = Enum.GetValues(typeof(TetrominoType)).Cast<TetrominoType>().ToList();
 
-	private Mino[,] TetrisBoard;
+	private TetrisBoard Board;
 	private Queue<Tetromino> TetrominoBag = new Queue<Tetromino>();
 
 	/// <summary>
 	/// Make a new bag generator and add one bag to it.
 	/// </summary>
-	public BagGenerator(Mino[,] tetrisBoard)
+	public BagGenerator(TetrisBoard board)
 	{
-		this.TetrisBoard = tetrisBoard;
+		this.Board = board;
 		AddNewBag();
 	}
 
@@ -105,7 +90,7 @@ public class BagGenerator
 				default:
 					throw new Exception("Tried to create tetromino of unknown type");
 			}
-			TetrominoBag.Enqueue(new Tetromino(addedTetrominoType, addedTetrominoMinos, this.TetrisBoard));
+			TetrominoBag.Enqueue(new Tetromino(addedTetrominoType, addedTetrominoMinos, this.Board));
 			drawingBag.RemoveAt(chosenTetrominoIndex);
 		}
 	}

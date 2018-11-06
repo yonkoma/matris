@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using static Tetromino;
 using static BagGenerator;
+using static TetrisBoard;
 
 public class GameBoard : TextureRect
 {
 	public const int BOARD_WIDTH = 10;
 	public const int BOARD_HEIGHT = 20;
-	public const int GHOST_BOARD_HEIGHT = BOARD_HEIGHT + 5;
+	public const int GHOST_BOARD_HEIGHT = BOARD_HEIGHT*2;
 	private const float DROP_RATE = 0.30f;
 	private const float SOFT_DROP_RATE = 0.08f;
 	private const float LOCK_DELAY = 0.5f;
@@ -16,7 +17,7 @@ public class GameBoard : TextureRect
 	private static readonly Color WHITE = new Color(1, 1, 1);
 	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
-	private Mino[,] TetrisBoard = new Mino[GHOST_BOARD_HEIGHT, BOARD_WIDTH];
+	private TetrisBoard Board = new TetrisBoard(GHOST_BOARD_HEIGHT, BOARD_WIDTH);
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
 	private BagGenerator BagGen;
 	private Tetromino CurrentTetromino;
@@ -52,12 +53,8 @@ public class GameBoard : TextureRect
 				SpriteBoard[row, col].Visible = false;
 				this.AddChild(SpriteBoard[row, col]);
 			}
-			for(int row = 0; row < GHOST_BOARD_HEIGHT; row++)
-			{
-				TetrisBoard[row, col] = Mino.Empty;
-			}
 		}
-		BagGen = new BagGenerator(this.TetrisBoard);
+		BagGen = new BagGenerator(this.Board);
 		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new Godot.Array { true });
 		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new Godot.Array { false });
 	}
@@ -181,14 +178,14 @@ public class GameBoard : TextureRect
 		{
 			for(int col = 0; col < BOARD_WIDTH; col++)
 			{
-				if(TetrisBoard[row, col] == Mino.Empty)
+				if(Board[row, col] == Mino.Empty)
 				{
 					SpriteBoard[row, col].Visible = false;
 				}
 				else
 				{
 					SpriteBoard[row, col].Visible = true;
-					SpriteBoard[row, col].Frame = (int)TetrisBoard[row, col];
+					SpriteBoard[row, col].Frame = (int)Board[row, col];
 					SpriteBoard[row, col].Modulate = WHITE;
 				}
 			}
@@ -243,7 +240,7 @@ public class GameBoard : TextureRect
 		{
 			Vector2Int minoPosition = piece.Position + relativeMinoPos;
 			fullyInGhostZone = fullyInGhostZone && minoPosition.y >= BOARD_HEIGHT;
-			TetrisBoard[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
+			Board[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
 			modifiedRows.Add(minoPosition.y);
 		}
 		if(fullyInGhostZone)
