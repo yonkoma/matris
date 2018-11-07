@@ -235,7 +235,7 @@ public class GameBoard : TextureRect
 	{
 		piece.Locked = true;
 		bool fullyInGhostZone = true;
-		List<int> modifiedRows = new List<int>();
+		HashSet<int> modifiedRows = new HashSet<int>();
 		foreach(Vector2Int relativeMinoPos in piece.MinoTiles)
 		{
 			Vector2Int minoPosition = piece.Position + relativeMinoPos;
@@ -243,15 +243,33 @@ public class GameBoard : TextureRect
 			Board[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
 			modifiedRows.Add(minoPosition.y);
 		}
+		CheckLineClears(modifiedRows);
 		if(fullyInGhostZone)
 		{
 			GameOver();
 		}
 	}
 
-	private void checkLineClears(List<int> rows)
+	/// <summary>
+	/// Check if there are lines to be cleared on the board.
+	/// </summary>
+	private void CheckLineClears(IEnumerable<int> rows)
 	{
-
+		// Sort the rows so things don't get messed up when we start clearing them.
+		SortedSet<int> fullRows = new SortedSet<int>(Comparer<int>.Create(
+			(i1, i2) => i2.CompareTo(i1)
+		));
+		foreach(int row in rows)
+		{
+			if(Board.LineIsFull(row))
+			{
+				fullRows.Add(row);
+			}
+		}
+		foreach(int row in fullRows)
+		{
+			Board.ClearRow(row);
+		}
 	}
 
 	/// <summary>

@@ -19,8 +19,8 @@ public class TetrisBoard
 		Gray   = 7,
 	};
 
-	private int Height;
-	private int Width;
+	public int Height { get; }
+	public int Width { get; }
 	private Mino[,] Minos;
 
 	public TetrisBoard(int height, int width)
@@ -54,5 +54,38 @@ public class TetrisBoard
 	{
 		get { return this[pos.y, pos.x]; }
 		set { this[pos.y, pos.x] = value; }
+	}
+
+	/// <summary>
+	/// Return true if the given row is completely filled.
+	/// </summary>
+	public bool LineIsFull(int row)
+	{
+		if(row < this.Height)
+		{
+			for(int col = 0; col < this.Width; col++)
+			{
+				if(Minos[row, col] == Mino.Empty)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/// <summary>
+	/// Move all rows above the given row down by one.
+	/// </summary>
+	public void ClearRow(int row)
+	{
+		for(int i = row; i < Height - 1; i++)
+		{
+			Array.Copy(Minos, (i+1) * Width, Minos, i * Width, Width);
+		}
+		for(int i = 0; i < Width; i++)
+		{
+			Minos[Height - 1, i] = Mino.Empty;
+		}
 	}
 }
