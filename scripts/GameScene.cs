@@ -9,12 +9,15 @@ public class GameScene : Node2D
 	delegate void PauseSignal();
 
 	private bool GameIsPaused = true;
+	private GameBoard board;
 
 	public override void _Ready()
 	{
+		board = (GameBoard)GetNode("GameBoard");
 		GetNode("GameOverMenu/ButtonContainer/PlayAgainButton").Connect("pressed", this, nameof(OnPlayAgain));
 		GetNode("GameOverMenu/ButtonContainer/MainMenuButton").Connect("pressed", this, nameof(OnMainMenu));
-		GetNode("GameBoard").Connect("GameOverSignal", this, nameof(OnGameOver));
+		board.Connect("GameOverSignal", this, nameof(OnGameOver));
+		board.Connect("PieceLockedSignal", this, nameof(OnPiecePlacement));
 	}
 
 	/// <summary>
@@ -45,5 +48,11 @@ public class GameScene : Node2D
 		CanvasItem gameOverMenu = (CanvasItem)GetNode("GameOverMenu");
 		blurLayer.Visible = true;
 		gameOverMenu.Visible = true;
+	}
+
+	public void OnPiecePlacement()
+	{
+		Label scoreLabel = (Label)GetNode("ScoreLabel");
+		scoreLabel.Text = board.Score.ToString();
 	}
 }

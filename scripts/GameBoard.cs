@@ -22,6 +22,9 @@ public class GameBoard : TextureRect
 	private BagGenerator BagGen;
 	private Tetromino CurrentTetromino;
 	private Tetromino FrozenTetromino;
+	public int Score { get; private set; } = 0;
+	private bool BackToBack = false;
+	private int Combo = 0;
 	private bool GameIsPaused = true;
 	private bool GameIsOver = false;
 	private float TimeSinceLastMovement = 0;
@@ -33,6 +36,8 @@ public class GameBoard : TextureRect
 
 	[Signal]
 	delegate void GameOverSignal();
+	[Signal]
+	delegate void PieceLockedSignal();
 
 	public override void _Ready()
 	{
@@ -243,22 +248,26 @@ public class GameBoard : TextureRect
 			Board[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
 			modifiedRows.Add(minoPosition.y);
 		}
-		CheckLineClears(modifiedRows);
+		int lineClears = CheckLineClears(modifiedRows);
+		AwaredScore(lineClears, piece.CurrentSpinReward);
 		if(fullyInGhostZone)
 		{
 			GameOver();
 		}
+		EmitSignal(nameof(PieceLockedSignal));
 	}
 
 	/// <summary>
 	/// Check if there are lines to be cleared on the board.
+	/// Return the number of lines cleared.
 	/// </summary>
-	private void CheckLineClears(IEnumerable<int> rows)
+	private int CheckLineClears(IEnumerable<int> rows)
 	{
 		// Sort the rows so things don't get messed up when we start clearing them.
 		SortedSet<int> fullRows = new SortedSet<int>(Comparer<int>.Create(
 			(i1, i2) => i2.CompareTo(i1)
 		));
+		int clearCount = 0;
 		foreach(int row in rows)
 		{
 			if(Board.LineIsFull(row))
@@ -268,8 +277,71 @@ public class GameBoard : TextureRect
 		}
 		foreach(int row in fullRows)
 		{
+			clearCount++;
 			Board.ClearRow(row);
 		}
+		return clearCount;
+	}
+
+	/// <summary>
+	/// Award points for clearing line, spins, combos, etc.
+	/// </summary>
+	private void AwaredScore(int lineClears, SpinReward spinBonus)
+	{
+		int score;
+		if(spinBonus == SpinReward.Regular)
+		{
+			score = 400 + lineClears*400;
+		}
+		else
+		{
+			switch(lineClears)
+			{
+				case 1:
+					score = 100;
+					break;
+				case 2:
+					score = 300;
+					break;
+				case 3:
+					score = 500;
+					break;
+				case 4:
+					score = 800;
+					break;
+				default:
+					score = 0;
+					break;
+			}
+			if(spinBonus == SpinReward.Mini)
+			{
+				score += 100;
+			}
+		}
+		// Back to back gives + 50%
+		if(spinBonus == SpinReward.Regular || lineClears == 4)
+		{
+			if(BackToBack)
+			{
+				score += score/2;
+			}
+			BackToBack = true;
+		}
+		else
+		{
+			BackToBack = false;
+		}
+		// Combo points
+		if(lineClears > 0)
+		{
+			score += Combo*50;
+			Combo++;
+		}
+		else
+		{
+			Combo = 0;
+		}
+		this.Score += score;
 	}
 
 	/// <summary>
