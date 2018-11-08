@@ -32,7 +32,7 @@ public class GameBoard : TextureRect
 	private bool TetrominoHasTouchedBottom = false;
 	private int RemainingLockResets = MAX_LOCK_DELAY_RESETS;
 	private bool SoftDropping = false;
-	private ImageTexture TetrominoTexture;
+	private Texture TetrominoTexture;
 
 	[Signal]
 	delegate void GameOverSignal();
@@ -43,8 +43,7 @@ public class GameBoard : TextureRect
 	{
 		// Called every time the node is added to the scene.
 		// Initializes Tetris board and Grid
-		TetrominoTexture = new ImageTexture();
-		TetrominoTexture.Load("res://images/tetrominos.png");
+		TetrominoTexture = (Texture)GD.Load("res://images/tetrominos.png");
 		int tetrominoSize = TetrominoTexture.GetHeight();
 		for(int col = 0; col < BOARD_WIDTH; col++)
 		{

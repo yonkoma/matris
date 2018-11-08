@@ -3,3 +3,8 @@
 .vs
 .vscode
 *.swp
+*.zip
+*.dmg
+*.exe
+*.pck
+*.x86_64
