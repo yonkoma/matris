@@ -17,7 +17,7 @@ public class GameScene : Node2D
 		GetNode("GameOverMenu/ButtonContainer/PlayAgainButton").Connect("pressed", this, nameof(OnPlayAgain));
 		GetNode("GameOverMenu/ButtonContainer/MainMenuButton").Connect("pressed", this, nameof(OnMainMenu));
 		board.Connect("GameOverSignal", this, nameof(OnGameOver));
-		board.Connect("PieceLockedSignal", this, nameof(OnPiecePlacement));
+		board.Connect("ScoreUpdateSignal", this, nameof(OnScoreUpdate));
 	}
 
 	/// <summary>
@@ -50,7 +50,7 @@ public class GameScene : Node2D
 		gameOverMenu.Visible = true;
 	}
 
-	public void OnPiecePlacement()
+	public void OnScoreUpdate()
 	{
 		Label scoreLabel = (Label)GetNode("ScoreLabel");
 		scoreLabel.Text = board.Score.ToString();

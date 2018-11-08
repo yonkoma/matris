@@ -31,13 +31,13 @@ public class GameBoard : TextureRect
 	private float RemainingLockDelay = LOCK_DELAY;
 	private bool TetrominoHasTouchedBottom = false;
 	private int RemainingLockResets = MAX_LOCK_DELAY_RESETS;
-	private float DropRate = DROP_RATE;
+	private bool SoftDropping = false;
 	private ImageTexture TetrominoTexture;
 
 	[Signal]
 	delegate void GameOverSignal();
 	[Signal]
-	delegate void PieceLockedSignal();
+	delegate void ScoreUpdateSignal();
 
 	public override void _Ready()
 	{
@@ -97,18 +97,18 @@ public class GameBoard : TextureRect
 			}
 			if(input.IsActionPressed("hard_drop"))
 			{
-				CurrentTetromino.HardDrop();
+				Score += Math.Abs(2 * CurrentTetromino.HardDrop().y);
 				LockPiece(CurrentTetromino);
 				CurrentTetromino = null;
 			}
 		}
 		if(input.IsActionPressed("soft_drop"))
 		{
-			DropRate = SOFT_DROP_RATE;
+			SoftDropping = true;
 		}
 		if(input.IsActionReleased("soft_drop"))
 		{
-			DropRate = DROP_RATE;
+			SoftDropping = false;
 		}
 	}
 
@@ -131,13 +131,18 @@ public class GameBoard : TextureRect
 			}
 
 			// If enough time has elapsed, move the tetromino down one block
-			if(TimeSinceLastMovement > DropRate)
+			if(TimeSinceLastMovement > (SoftDropping ? SOFT_DROP_RATE : DROP_RATE))
 			{
 				TimeSinceLastMovement = 0;
 				if(CurrentTetromino.Translate(Vector2Int.Down))
 				{
 					RemainingLockDelay = LOCK_DELAY;
 					RemainingLockResets = MAX_LOCK_DELAY_RESETS;
+					if(SoftDropping)
+					{
+						Score += 1;
+						EmitSignal(nameof(ScoreUpdateSignal));
+					}
 				}
 			}
 
@@ -254,7 +259,6 @@ public class GameBoard : TextureRect
 		{
 			GameOver();
 		}
-		EmitSignal(nameof(PieceLockedSignal));
 	}
 
 	/// <summary>
@@ -342,6 +346,7 @@ public class GameBoard : TextureRect
 			Combo = 0;
 		}
 		this.Score += score;
+		EmitSignal(nameof(ScoreUpdateSignal));
 	}
 
 	/// <summary>

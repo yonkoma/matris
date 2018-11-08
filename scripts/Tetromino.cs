@@ -213,15 +213,19 @@ public class Tetromino
 
 	/// <summary>
 	/// Hard drop the tetromino.
+	/// Return distance dropped.
 	/// </summary>
-	public void HardDrop()
+	public Vector2Int HardDrop()
 	{
 		if(!Locked)
 		{
 			Locked = true;
-			this.Position += GetHardDropOffset();
+			Vector2Int offset = GetHardDropOffset();
+			this.Position += offset;
 			Locked = false;
+			return offset;
 		}
+		return Vector2Int.Zero;
 	}
 
 	/// <summary>
