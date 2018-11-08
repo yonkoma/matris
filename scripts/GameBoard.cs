@@ -345,6 +345,25 @@ public class GameBoard : TextureRect
 		{
 			Combo = 0;
 		}
+		// Check for a perfect clear
+		if(Board.IsEmpty())
+		{
+			switch(lineClears)
+			{
+				case 1:
+					score += 800;
+					break;
+				case 2:
+					score += 1000;
+					break;
+				case 3:
+					score += 1800;
+					break;
+				case 4:
+					score += 2000;
+					break;
+			}
+		}
 		this.Score += score;
 		EmitSignal(nameof(ScoreUpdateSignal));
 	}

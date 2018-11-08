@@ -88,4 +88,19 @@ public class TetrisBoard
 			Minos[Height - 1, i] = Mino.Empty;
 		}
 	}
+
+	/// <summary>
+	/// Returns true if the board is empty.
+	/// </summary>
+	public bool IsEmpty()
+	{
+		foreach(Mino mino in Minos)
+		{
+			if(mino != Mino.Empty)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 }
