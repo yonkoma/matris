@@ -35,9 +35,9 @@ public class Tetromino
 	/// </summary>
 	public enum SpinReward
 	{
-		Regular,
-		Mini,
 		None,
+		Mini,
+		Regular,
 	}
 
 	public static readonly List<TetrominoType> SpinBonusPieces = new List<TetrominoType> { TetrominoType.T };
@@ -69,6 +69,7 @@ public class Tetromino
 		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
 		this.Board = board;
 		CurrentRotationState = Rotation.Up;
+		CurrentSpinReward = SpinReward.None;
 	}
 
 	/// <summary>
