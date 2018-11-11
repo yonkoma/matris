@@ -11,11 +11,11 @@ public class GameBoard : TextureRect
 	public const int BOARD_HEIGHT = 20;
 	public const int GHOST_BOARD_HEIGHT = BOARD_HEIGHT*2;
 	private const float DROP_RATE = 0.30f;
-	private const float SOFT_DROP_RATE = 0.06f;
+	private const float SOFT_DROP_RATE = 0.03f;
 	private const float LOCK_DELAY = 0.5f;
 	private const int MAX_LOCK_DELAY_RESETS = 15;
-	private const float AUTO_SHIFT_DELAY = 0.15f;
-	private const float SHIFT_SPEED = 0.03f;
+	private const float AUTO_SHIFT_DELAY = 0.2f;
+	private const float SHIFT_SPEED = 0.033f;
 	private static readonly Color WHITE = new Color(1, 1, 1);
 	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
@@ -178,7 +178,7 @@ public class GameBoard : TextureRect
 			}
 
 			// Check if the tetromino should be locked in place
-			if(TetrominoHasTouchedBottom && CurrentTetromino.IsTouchingBottom)
+			if(TetrominoHasTouchedBottom && CurrentTetromino.IsTouchingBottom())
 			{
 				RemainingLockDelay -= delta;
 				if(RemainingLockDelay <= 0)
@@ -191,7 +191,7 @@ public class GameBoard : TextureRect
 			SetTetrisBoardSprites();
 			if(CurrentTetromino != null)
 			{
-				TetrominoHasTouchedBottom = CurrentTetromino.IsTouchingBottom;
+				TetrominoHasTouchedBottom = CurrentTetromino.IsTouchingBottom();
 				SetDropPreviewSprites();
 				SetTetrominoSprites();
 			}

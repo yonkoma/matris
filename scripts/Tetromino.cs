@@ -45,18 +45,9 @@ public class Tetromino
 
 	public TetrominoType Type { get; }
 	public Vector2Int[] MinoTiles { get; private set; }
-	private Vector2Int _position;
-	public Vector2Int Position {
-		get { return _position; }
-		private set
-		{
-			_position = value;
-			IsTouchingBottom = !IsValidMovement(Vector2Int.Down, MinoTiles);
-		}
-	}
+	public Vector2Int Position { get; private set; }
 	public TetrisBoard Board { get; }
 	public bool Locked { get; set; } = false;
-	public bool IsTouchingBottom { get; private set; }
 	public SpinReward CurrentSpinReward { get; private set; }
 	private Rotation CurrentRotationState;
 
@@ -240,6 +231,11 @@ public class Tetromino
 			offset += Vector2Int.Down;
 		}
 		return offset;
+	}
+
+	public bool IsTouchingBottom()
+	{
+		return !IsValidMovement(Vector2Int.Down, MinoTiles);
 	}
 
 	/// <summary>
