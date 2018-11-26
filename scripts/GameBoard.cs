@@ -19,12 +19,12 @@ public class GameBoard : TextureRect
 	private static readonly Color WHITE = new Color(1, 1, 1);
 	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
 
+	public int Score { get; private set; } = 0;
+	public BagGenerator BagGen { get; private set; }
 	private TetrisBoard Board = new TetrisBoard(GHOST_BOARD_HEIGHT, BOARD_WIDTH);
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
-	private BagGenerator BagGen;
 	private Tetromino CurrentTetromino;
 	private Tetromino FrozenTetromino;
-	public int Score { get; private set; } = 0;
 	private bool BackToBack = false;
 	private int Combo = 0;
 	private bool GameIsPaused = true;
@@ -42,6 +42,8 @@ public class GameBoard : TextureRect
 	delegate void GameOverSignal();
 	[Signal]
 	delegate void ScoreUpdateSignal();
+	[Signal]
+	delegate void BagChangeSignal();
 
 	public override void _Ready()
 	{
@@ -62,7 +64,7 @@ public class GameBoard : TextureRect
 				this.AddChild(SpriteBoard[row, col]);
 			}
 		}
-		BagGen = new BagGenerator(this.Board);
+		BagGen = new BagGenerator(this);
 		GetNode("/root/GameRoot").Connect("PlaySignal", this, nameof(OnPlayPause), new Godot.Array { true });
 		GetNode("/root/GameRoot").Connect("PauseSignal", this, nameof(OnPlayPause), new Godot.Array { false });
 	}
@@ -145,7 +147,8 @@ public class GameBoard : TextureRect
 			if(CurrentTetromino == null)
 			{
 				CurrentTetromino = BagGen.Dequeue();
-				if(!CurrentTetromino.Spawn(new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT + 1)))
+				EmitSignal(nameof(BagChangeSignal));
+				if(!CurrentTetromino.Spawn(this.Board, new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT + 1)))
 				{
 					GameOver();
 				}

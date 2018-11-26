@@ -3,7 +3,7 @@
 [ext_resource path="res://images/board_background.png" type="Texture" id=1]
 [ext_resource path="res://scripts/GameBoard.cs" type="Script" id=2]
 
-[node name="GameBoard" type="TextureRect" index="0"]
+[node name="GameBoard" type="TextureRect"]
 
 anchor_left = 0.0
 anchor_top = 0.0

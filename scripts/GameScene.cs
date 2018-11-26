@@ -18,6 +18,7 @@ public class GameScene : Node2D
 		GetNode("GameOverMenu/ButtonContainer/MainMenuButton").Connect("pressed", this, nameof(OnMainMenu));
 		board.Connect("GameOverSignal", this, nameof(OnGameOver));
 		board.Connect("ScoreUpdateSignal", this, nameof(OnScoreUpdate));
+		board.Connect("BagChangeSignal", this, nameof(OnBagUpdate));
 	}
 
 	/// <summary>
@@ -54,5 +55,15 @@ public class GameScene : Node2D
 	{
 		Label scoreLabel = (Label)GetNode("ScoreLabel");
 		scoreLabel.Text = board.Score.ToString();
+	}
+
+	public void OnBagUpdate()
+	{
+		Godot.Array previews = GetNode("PiecePreviews").GetChildren();
+		for(int i = 0; i < previews.Count; i++)
+		{
+			PreviewRect preview = (PreviewRect)previews[i];
+			preview.PieceType = board.BagGen.ElementAt(i).Type;
+		}
 	}
 }

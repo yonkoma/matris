@@ -45,8 +45,8 @@ public class Tetromino
 
 	public TetrominoType Type { get; }
 	public Vector2Int[] MinoTiles { get; private set; }
-	public Vector2Int Position { get; private set; }
-	public TetrisBoard Board { get; }
+	public Vector2Int Position { get; private set; } = Vector2Int.Zero;
+	public TetrisBoard Board { get; private set; }
 	public bool Locked { get; set; } = false;
 	public SpinReward CurrentSpinReward { get; private set; }
 	private Rotation CurrentRotationState;
@@ -54,11 +54,10 @@ public class Tetromino
 	/// <summary>
 	/// Create a new tetromino
 	/// </summary>
-	public Tetromino(TetrominoType type, Vector2Int[] minoTiles, TetrisBoard board)
+	public Tetromino(TetrominoType type)
 	{
 		this.Type = type;
-		this.MinoTiles = (Vector2Int[])minoTiles.Clone();
-		this.Board = board;
+		this.MinoTiles = (Vector2Int[])TetrominoTiles(type).Clone();
 		CurrentRotationState = Rotation.Up;
 		CurrentSpinReward = SpinReward.None;
 	}
@@ -67,9 +66,10 @@ public class Tetromino
 	/// Spawn the tetromino at the given position.
 	/// Returns false if the tetromino could not be spawned.
 	/// </summary>
-	public bool Spawn(Vector2Int position)
+	public bool Spawn(TetrisBoard board, Vector2Int position)
 	{
 		this.Position = position;
+		this.Board = board;
 		return IsValidMovement(Vector2Int.Zero, this.MinoTiles);
 	}
 
@@ -254,6 +254,38 @@ public class Tetromino
 		}
 		return true;
 	}
+
+	public static Vector2Int[] TetrominoTiles(TetrominoType type)
+	{
+		switch(type)
+		{
+			case TetrominoType.Z:
+				return Z_TETROMINO;
+			case TetrominoType.S:
+				return S_TETROMINO;
+			case TetrominoType.J:
+				return J_TETROMINO;
+			case TetrominoType.L:
+				return L_TETROMINO;
+			case TetrominoType.O:
+				return O_TETROMINO;
+			case TetrominoType.I:
+				return I_TETROMINO;;
+			case TetrominoType.T:
+				return T_TETROMINO;
+			default:
+				throw new Exception("Tried to get tetromino of unknown type");
+		}
+	}
+
+	/// Vector arrays for the seven tetromino
+	private static readonly Vector2Int[] Z_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(0, 1), new Vector2Int(0, 0), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] S_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1) };
+	private static readonly Vector2Int[] J_TETROMINO = { new Vector2Int(-1, 1), new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] L_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(1, 1) };
+	private static readonly Vector2Int[] O_TETROMINO = { new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1), new Vector2Int(1, 0) };
+	private static readonly Vector2Int[] I_TETROMINO = { new Vector2Int(-1, 0), new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0) };
+	private static readonly Vector2Int[] T_TETROMINO = { new Vector2Int(0, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(1, 0) };
 
 	/// Rotation offsets for pieces other than I and O.
 	private static readonly Dictionary<Rotation, Vector2Int[]> RotationOffsets = new Dictionary<Rotation, Vector2Int[]>
