@@ -70,7 +70,7 @@ public class Tetromino
 	{
 		this.Position = position;
 		this.Board = board;
-		return IsValidMovement(Vector2Int.Zero, this.MinoTiles);
+		return board.IsValidPosition(position, this);
 	}
 
 	/// <summary>
@@ -244,15 +244,7 @@ public class Tetromino
 	/// </summary>
 	private bool IsValidMovement(Vector2Int vec, Vector2Int[] minos)
 	{
-		for(int i = 0; i < minos.Length; i++)
-		{
-			Vector2Int newPos = this.Position + vec + minos[i];
-			if(Board[newPos.y, newPos.x] != Mino.Empty)
-			{
-				return false;
-			}
-		}
-		return true;
+		return Board.IsValidPosition(this.Position + vec, minos);
 	}
 
 	public static Vector2Int[] TetrominoTiles(TetrominoType type)

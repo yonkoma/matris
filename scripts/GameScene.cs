@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class GameScene : Node2D
+public class GameScene : Node
 {
 	[Signal]
 	delegate void PlaySignal();

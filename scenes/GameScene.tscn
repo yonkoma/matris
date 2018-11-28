@@ -3,7 +3,7 @@
 [ext_resource path="res://scripts/GameScene.cs" type="Script" id=1]
 [ext_resource path="res://scenes/GameBoard.tscn" type="PackedScene" id=2]
 [ext_resource path="res://shaders/blur.shader" type="Shader" id=3]
-[ext_resource path="res://images/white.png" type="Texture" id=4]
+[ext_resource path="res://images/white64.png" type="Texture" id=4]
 [ext_resource path="res://scripts/PlayPrompt.cs" type="Script" id=5]
 [ext_resource path="res://scenes/PreviewRect.tscn" type="PackedScene" id=6]
 
@@ -14,11 +14,9 @@ shader = ExtResource( 3 )
 shader_param/amount = 1.0
 _sections_unfolded = [ "shader_param" ]
 
-[node name="GameRoot" type="Node2D" index="0"]
+[node name="GameRoot" type="Node" index="0"]
 
-position = Vector2( 0, 1 )
 script = ExtResource( 1 )
-_sections_unfolded = [ "Material", "Pause", "Transform", "Visibility", "Z Index" ]
 
 [node name="GameBoard" parent="." index="0" instance=ExtResource( 2 )]
 
@@ -26,6 +24,8 @@ margin_left = 250.0
 margin_top = 70.0
 margin_right = 570.0
 margin_bottom = 710.0
+rect_pivot_offset = Vector2( 160, 320 )
+_sections_unfolded = [ "Anchor", "Rect" ]
 
 [node name="Blur" type="TextureRect" parent="." index="1"]
 
@@ -48,7 +48,7 @@ size_flags_vertical = 1
 texture = ExtResource( 4 )
 expand = true
 stretch_mode = 0
-_sections_unfolded = [ "Material" ]
+_sections_unfolded = [ "Material", "Rect" ]
 
 [node name="GameOverMenu" type="Panel" parent="." index="2"]
 
@@ -58,10 +58,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = 278.0
-margin_top = 247.0
-margin_right = 478.0
-margin_bottom = 487.0
+margin_left = -85.0
+margin_top = -170.0
+margin_right = 105.0
+margin_bottom = 60.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -95,9 +95,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 72.0
-margin_right = 200.0
-margin_bottom = 92.0
+margin_top = 67.0
+margin_right = 190.0
+margin_bottom = 87.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -119,9 +119,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 148.0
-margin_right = 200.0
-margin_bottom = 168.0
+margin_top = 143.0
+margin_right = 190.0
+margin_bottom = 163.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -222,17 +222,17 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="Preview2" parent="PiecePreviews" index="1" instance=ExtResource( 6 )]
 
-position = Vector2( 0, 100 )
+position = Vector2( 0, 120 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Preview3" parent="PiecePreviews" index="2" instance=ExtResource( 6 )]
 
-position = Vector2( 0, 200 )
+position = Vector2( 0, 240 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Preview4" parent="PiecePreviews" index="3" instance=ExtResource( 6 )]
 
-position = Vector2( 0, 300 )
+position = Vector2( 0, 360 )
 _sections_unfolded = [ "Transform" ]
 
 

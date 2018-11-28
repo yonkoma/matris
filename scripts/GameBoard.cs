@@ -16,15 +16,16 @@ public class GameBoard : TextureRect
 	private const int MAX_LOCK_DELAY_RESETS = 15;
 	private const float AUTO_SHIFT_DELAY = 0.2f;
 	private const float SHIFT_SPEED = 0.033f;
-	private static readonly Color WHITE = new Color(1, 1, 1);
-	private static readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
+	private const int FREEZE_DIST = 3; /// How far a tetromino must have fallen before it can be frozen
+	private readonly Vector2Int SPAWN_POS = new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT - 1);
+	private readonly Color WHITE = new Color(1, 1, 1);
+	private readonly Color DROP_PREVIEW_COLOR = new Color(1, 1, 1, 0.6f);
+	private readonly Color FROZEN_COLOR = new Color(0.7f, 0.7f, 1);
 
 	public int Score { get; private set; } = 0;
 	public BagGenerator BagGen { get; private set; }
 	private TetrisBoard Board = new TetrisBoard(GHOST_BOARD_HEIGHT, BOARD_WIDTH);
 	private Sprite[,] SpriteBoard = new Sprite[BOARD_HEIGHT, BOARD_WIDTH];
-	private Tetromino CurrentTetromino;
-	private Tetromino FrozenTetromino;
 	private bool BackToBack = false;
 	private int Combo = 0;
 	private bool GameIsPaused = true;
@@ -77,20 +78,20 @@ public class GameBoard : TextureRect
 	/// Handles inputs for moving the tetromino
 	public override void _Input(InputEvent input)
 	{
-		if(CurrentTetromino != null && !GameIsPaused && !GameIsOver)
+		if(Board.CurrentTetromino != null && !GameIsPaused && !GameIsOver)
 		{
 			if(input.IsActionPressed("move_left"))
 			{
 				RemainingShiftDelay = AUTO_SHIFT_DELAY;
 				AutoShiftDirection = Vector2Int.Left;
-				if(CurrentTetromino.Translate(Vector2Int.Left))
+				if(Board.CurrentTetromino.Translate(Vector2Int.Left))
 					ResetLockDelay();
 			}
 			if(input.IsActionPressed("move_right"))
 			{
 				RemainingShiftDelay = AUTO_SHIFT_DELAY;
 				AutoShiftDirection = Vector2Int.Right;
-				if(CurrentTetromino.Translate(Vector2Int.Right))
+				if(Board.CurrentTetromino.Translate(Vector2Int.Right))
 					ResetLockDelay();
 			}
 			if(input.IsActionReleased("move_left"))
@@ -112,20 +113,22 @@ public class GameBoard : TextureRect
 
 			if(input.IsActionPressed("rotate_left"))
 			{
-				if(CurrentTetromino.Rotate(Rotation.Left))
+				if(Board.CurrentTetromino.Rotate(Rotation.Left))
 					ResetLockDelay();
 			}
 			else if(input.IsActionPressed("rotate_right"))
 			{
-				if(CurrentTetromino.Rotate(Rotation.Right))
+				if(Board.CurrentTetromino.Rotate(Rotation.Right))
 					ResetLockDelay();
 			}
 			if(input.IsActionPressed("hard_drop"))
 			{
-				Score += Math.Abs(2 * CurrentTetromino.HardDrop().y);
-				LockPiece(CurrentTetromino);
-				CurrentTetromino = null;
+				Score += Math.Abs(2 * Board.CurrentTetromino.HardDrop().y);
+				LockPiece(Board.CurrentTetromino);
+				Board.CurrentTetromino = null;
 			}
+			if(input.IsActionPressed("swap"))
+				Board.Swap();
 		}
 		if(input.IsActionPressed("soft_drop"))
 			SoftDropping = true;
@@ -144,13 +147,21 @@ public class GameBoard : TextureRect
 				RemainingShiftDelay -= delta;
 
 			// If we don't have a tetromino anymore, get a new one
-			if(CurrentTetromino == null)
+			if(Board.CurrentTetromino == null)
 			{
-				CurrentTetromino = BagGen.Dequeue();
-				EmitSignal(nameof(BagChangeSignal));
-				if(!CurrentTetromino.Spawn(this.Board, new Vector2Int(BOARD_WIDTH/2 - 1, BOARD_HEIGHT + 1)))
+				if(Board.FrozenTetromino != null && SPAWN_POS.y - Board.FrozenTetromino.Position.y < FREEZE_DIST)
 				{
-					GameOver();
+					Board.CurrentTetromino = Board.FrozenTetromino;
+					Board.FrozenTetromino = null;
+				}
+				else
+				{
+					Board.CurrentTetromino = BagGen.Dequeue();
+					EmitSignal(nameof(BagChangeSignal));
+					if(!Board.CurrentTetromino.Spawn(Board, SPAWN_POS))
+					{
+						GameOver();
+					}
 				}
 			}
 
@@ -158,7 +169,7 @@ public class GameBoard : TextureRect
 			if(TimeSinceLastMovement > (SoftDropping ? SOFT_DROP_RATE : DROP_RATE))
 			{
 				TimeSinceLastMovement = 0;
-				if(CurrentTetromino.Translate(Vector2Int.Down))
+				if(Board.CurrentTetromino.Translate(Vector2Int.Down))
 				{
 					RemainingLockDelay = LOCK_DELAY;
 					RemainingLockResets = MAX_LOCK_DELAY_RESETS;
@@ -173,7 +184,7 @@ public class GameBoard : TextureRect
 			// Move if auto shifting (DAS) is active and enough time has elapsed
 			if(RemainingShiftDelay <= 0)
 			{
-				if(CurrentTetromino.Translate(AutoShiftDirection))
+				if(Board.CurrentTetromino.Translate(AutoShiftDirection))
 				{
 					ResetLockDelay();
 					RemainingShiftDelay = SHIFT_SPEED;
@@ -181,22 +192,26 @@ public class GameBoard : TextureRect
 			}
 
 			// Check if the tetromino should be locked in place
-			if(TetrominoHasTouchedBottom && CurrentTetromino.IsTouchingBottom())
+			if(TetrominoHasTouchedBottom && Board.CurrentTetromino.IsTouchingBottom())
 			{
 				RemainingLockDelay -= delta;
 				if(RemainingLockDelay <= 0)
 				{
-					LockPiece(CurrentTetromino);
-					CurrentTetromino = null;
+					LockPiece(Board.CurrentTetromino);
+					Board.CurrentTetromino = null;
 				}
 			}
 
 			SetTetrisBoardSprites();
-			if(CurrentTetromino != null)
+			if(Board.CurrentTetromino != null)
 			{
-				TetrominoHasTouchedBottom = CurrentTetromino.IsTouchingBottom();
+				TetrominoHasTouchedBottom = Board.CurrentTetromino.IsTouchingBottom();
 				SetDropPreviewSprites();
 				SetTetrominoSprites();
+			}
+			if(Board.FrozenTetromino != null)
+			{
+				SetFreezeSprites();
 			}
 		}
 	}
@@ -241,14 +256,14 @@ public class GameBoard : TextureRect
 	/// </summary>
 	private void SetDropPreviewSprites()
 	{
-		Vector2Int hardDropOffset = CurrentTetromino.GetHardDropOffset();
-		foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+		Vector2Int hardDropOffset = Board.CurrentTetromino.GetHardDropOffset();
+		foreach(Vector2Int relativeMino in Board.CurrentTetromino.MinoTiles)
 		{
-			Vector2Int minoPosition = CurrentTetromino.Position + hardDropOffset + relativeMino;
+			Vector2Int minoPosition = Board.CurrentTetromino.Position + hardDropOffset + relativeMino;
 			if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
 			{
 				SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
-				SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
+				SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)Board.CurrentTetromino.Type;
 				SpriteBoard[minoPosition.y, minoPosition.x].Modulate = DROP_PREVIEW_COLOR;
 			}
 		}
@@ -259,14 +274,26 @@ public class GameBoard : TextureRect
 	/// </summary>
 	private void SetTetrominoSprites()
 	{
-		foreach(Vector2Int relativeMino in CurrentTetromino.MinoTiles)
+		foreach(Vector2Int relativeMino in Board.CurrentTetromino.MinoTiles)
 		{
-			Vector2Int minoPosition = CurrentTetromino.Position + relativeMino;
-			if(minoPosition.x >= 0 && minoPosition.x < BOARD_WIDTH && minoPosition.y >= 0 && minoPosition.y < BOARD_HEIGHT)
+			Vector2Int absMino = Board.CurrentTetromino.Position + relativeMino;
+			if(absMino.x >= 0 && absMino.x < BOARD_WIDTH && absMino.y >= 0 && absMino.y < BOARD_HEIGHT)
 			{
-				SpriteBoard[minoPosition.y, minoPosition.x].Visible = true;
-				SpriteBoard[minoPosition.y, minoPosition.x].Frame = (int)CurrentTetromino.Type;
-				SpriteBoard[minoPosition.y, minoPosition.x].Modulate = WHITE;
+				SpriteBoard[absMino.y, absMino.x].Visible = true;
+				SpriteBoard[absMino.y, absMino.x].Frame = (int)Board.CurrentTetromino.Type;
+				SpriteBoard[absMino.y, absMino.x].Modulate = WHITE;
+			}
+		}
+	}
+
+	private void SetFreezeSprites()
+	{
+		foreach(Vector2Int relativeMino in Board.FrozenTetromino.MinoTiles)
+		{
+			Vector2Int absMino = Board.FrozenTetromino.Position + relativeMino;
+			if(absMino.x >= 0 && absMino.x < BOARD_WIDTH && absMino.y >= 0 && absMino.y < BOARD_HEIGHT)
+			{
+				SpriteBoard[absMino.y, absMino.x].Modulate = FROZEN_COLOR;
 			}
 		}
 	}
