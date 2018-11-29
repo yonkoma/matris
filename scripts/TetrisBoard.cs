@@ -69,11 +69,23 @@ public class TetrisBoard
 		set { this[pos.y, pos.x] = value; }
 	}
 
+	/// <summary>
+	/// Swap the current tetromino and the held/frozen tetromino.
+	/// </summary>
 	public void Swap()
 	{
 		Tetromino tmp = CurrentTetromino;
 		CurrentTetromino = FrozenTetromino;
 		FrozenTetromino = tmp;
+	}
+
+	/// <summary>
+	/// Add all of a tetromino's minos to the board.
+	/// </summary>
+	public void AddTetromino(Tetromino tetromino)
+	{
+		foreach(Vector2Int relativeMino in tetromino.MinoTiles)
+			this[tetromino.Position + relativeMino] = (Mino)tetromino.Type;
 	}
 
 	/// <summary>
@@ -106,6 +118,10 @@ public class TetrisBoard
 		for(int i = 0; i < Width; i++)
 		{
 			Minos[Height - 1, i] = Mino.Empty;
+		}
+		if(FrozenTetromino != null && FrozenTetromino.Position.y > row)
+		{
+			FrozenTetromino.UnsafeTranslate(Vector2Int.Down);
 		}
 	}
 

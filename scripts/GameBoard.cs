@@ -128,7 +128,20 @@ public class GameBoard : TextureRect
 				Board.CurrentTetromino = null;
 			}
 			if(input.IsActionPressed("swap"))
+			{
 				Board.Swap();
+				Tetromino piece = Board.FrozenTetromino;
+				if(piece != null)
+				{
+					HashSet<int> modifiedRows = new HashSet<int>();
+					foreach(Vector2Int relativeMinoPos in piece.MinoTiles)
+					{
+						Vector2Int minoPosition = piece.Position + relativeMinoPos;
+						modifiedRows.Add(minoPosition.y);
+					}
+					CheckLineClears(modifiedRows);
+				}
+			}
 		}
 		if(input.IsActionPressed("soft_drop"))
 			SoftDropping = true;
@@ -311,7 +324,7 @@ public class GameBoard : TextureRect
 		{
 			Vector2Int minoPosition = piece.Position + relativeMinoPos;
 			fullyInGhostZone = fullyInGhostZone && minoPosition.y >= BOARD_HEIGHT;
-			Board[minoPosition.y, minoPosition.x] = (Mino)piece.Type;
+			Board[minoPosition] = (Mino)piece.Type;
 			modifiedRows.Add(minoPosition.y);
 		}
 		int lineClears = CheckLineClears(modifiedRows);
@@ -337,6 +350,20 @@ public class GameBoard : TextureRect
 		{
 			if(Board.LineIsFull(row))
 			{
+				if(Board.FrozenTetromino != null)
+				{
+					foreach(Vector2Int relativeMino in Board.FrozenTetromino.MinoTiles)
+					{
+						Vector2Int absMino = Board.FrozenTetromino.Position + relativeMino;
+						if(absMino.y == row)
+						{
+							Tetromino oldFrozen = Board.FrozenTetromino;
+							Board.FrozenTetromino = null;
+							Board.AddTetromino(oldFrozen);
+							break;
+						}
+					}
+				}
 				fullRows.Add(row);
 			}
 		}

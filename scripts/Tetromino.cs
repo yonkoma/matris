@@ -95,6 +95,14 @@ public class Tetromino
 	}
 
 	/// <summary>
+	/// Moves the tetromino without performing any checks.
+	/// </summary>
+	public void UnsafeTranslate(Vector2Int vec)
+	{
+		this.Position += vec;
+	}
+
+	/// <summary>
 	/// Rotate the tetromino in the given direction and return whether the rotation was successful.
 	/// Tries to apply SRS kicks. Fails if no kick was possible or the tetromino is locked.
 	/// </summary>
