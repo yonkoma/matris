@@ -6,6 +6,9 @@
 [Game|
   [<start>begin]->[New Tetromino]
   [New Tetromino]->[Place]
+  [New Tetromino]->[Freeze]
+  [Freeze]->[New Tetromino]
+  [Freeze]->[Place]
   [Place]->[New Tetromino]
   [Place]->[Top Out]
   [Top Out]->[<end>end]

@@ -4,19 +4,17 @@
 #bendSize: 0.6
 #direction: right
 #arrowSize: 0.6
-[GameScene]+->[GameBoard]
-[GameScene]+->[PlayPrompt]
-[GameScene]+->[ScoreLabel]
-[GameScene]+->[TimeLabel]
+[GameScene]+->1[GameBoard]
+[GameScene]+->1[PlayPrompt]
+[GameScene]+->1..*[PreviewRect]
 
+[GameBoard]-->[TetrisBoard]
 [GameBoard]-->[BagGenerator]
 [GameBoard]-->[Tetromino]
-[GameBoard]-->[Vector2Int]
-[Tetromino]-->[Vector2Int]
-[BagGenerator]-->[Vector2Int]
+[TetrisBoard]-->[Tetromino]
 [BagGenerator]-->[Tetromino]
 [Tetromino]-->[Rotation]
-[Vector2Int]-->[Rotation]
+[PreviewRect]-->[Tetromino]
 
 [HomeScene]->[GameScene]
 [HomeScene]->[OptionsScene]
